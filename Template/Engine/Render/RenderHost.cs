@@ -24,7 +24,7 @@ namespace EMBC.Engine.Render
 
         public virtual void Dispose()
         {
-            FpsCounter?.Dispose();
+            FpsCounter.Dispose();
             FpsCounter = default;
 
             HostHandle = default;

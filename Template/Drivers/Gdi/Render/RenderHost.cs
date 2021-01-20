@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EMBC.Win;
+using System;
 using System.Drawing;
 
 namespace EMBC.Drivers.Gdi.Render
@@ -11,6 +12,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         private Graphics GraphicsHost { get; set; }
         private Font FontConsloe12 { get; set; }
+        private BufferedGraphics BufferedGraphics { get; set; }
 
         #endregion
 
@@ -21,18 +23,23 @@ namespace EMBC.Drivers.Gdi.Render
         {
             GraphicsHost = Graphics.FromHwnd(HostHandle);
 
+            BufferedGraphics = BufferedGraphicsManager.Current.Allocate(GraphicsHost, new Rectangle(Point.Empty, W.GetClientRectangle(HostHandle).Size));
+
             FontConsloe12 = new Font("Console", 12);
         }
 
         public override void Dispose()
         {
-            FontConsloe12?.Dispose();
+            FontConsloe12.Dispose();
             FontConsloe12 = default;
+
+            BufferedGraphics.Dispose();
+            BufferedGraphics = default;
 
             GraphicsHost.Dispose();
             GraphicsHost = default;
 
-            base.Dispose();
+            base.Dispose(); 
         }
 
         #endregion
@@ -41,8 +48,10 @@ namespace EMBC.Drivers.Gdi.Render
 
         protected override void RenderInternal()
         {
-            GraphicsHost.Clear(Color.Black);
-            GraphicsHost.DrawString(FpsCounter.FpsString, FontConsloe12, Brushes.Red, 0, 0);
+            BufferedGraphics.Graphics.Clear(Color.Black);
+            BufferedGraphics.Graphics.DrawString(FpsCounter.FpsString, FontConsloe12, Brushes.Red, 0, 0);
+
+            BufferedGraphics.Render();
         }
 
         #endregion

@@ -39,10 +39,10 @@ namespace EMBC.Engine.Render
 
         public void Dispose()
         {
-            StowatchUpdate?.Stop();
+            StowatchUpdate.Stop();
             StowatchUpdate = default;
 
-            StowatchFrame?.Stop();
+            StowatchFrame.Stop();
             StowatchFrame = default;
         }
 
