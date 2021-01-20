@@ -27,6 +27,12 @@ namespace EMBC.Client
         private void Ctor()
         {
             RenderHosts = WindowFactory.SeedWindows();
+
+            while (!Dispatcher.HasShutdownStarted)
+            {
+                Render(RenderHosts);
+                System.Windows.Forms.Application.DoEvents();
+            }
         }
 
         public void Dispose()
@@ -36,6 +42,14 @@ namespace EMBC.Client
             RenderHosts = default;
         }
 
+        #endregion
+
+        #region //render
+
+        private static void Render(IEnumerable<IRenderHost> renderhosts)
+        {
+            renderhosts.ForEach(rh => rh.Render());
+        }
         #endregion
     }
 }

@@ -9,6 +9,8 @@ namespace EMBC.Engine.Render
 
         public IntPtr HostHandle { get; private set; }
 
+        public FpsCounter FpsCounter { get; private set; }
+
         #endregion
 
         #region // ctor
@@ -16,12 +18,33 @@ namespace EMBC.Engine.Render
         protected RenderHost(IntPtr hostHandle)
         {
             HostHandle = hostHandle;
+
+            FpsCounter = new FpsCounter(new TimeSpan(0, 0, 0, 0, 1000));
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
+            FpsCounter?.Dispose();
+            FpsCounter = default;
+
             HostHandle = default;
         }
+
+        #endregion
+
+        #region //render
+
+        public void Render()
+        {
+            FpsCounter.StartFrame();
+
+            RenderInternal();
+
+            FpsCounter.StopFrame();
+        }
+
+        protected abstract void RenderInternal();
+
         #endregion
 
     }

@@ -6,5 +6,9 @@ namespace EMBC.Engine.Render
         IDisposable
     {
         IntPtr HostHandle { get; }
+
+        FpsCounter FpsCounter { get; }
+
+        void Render();
     }
 }

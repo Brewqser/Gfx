@@ -53,6 +53,7 @@
     <Compile Include="Client\Program.cs" />
     <Compile Include="Client\WindowFactory.cs" />
     <Compile Include="Drivers\Gdi\Render\RenderHost.cs" />
+    <Compile Include="Engine\Render\FpsCounter.cs" />
     <Compile Include="Engine\Render\IRenderHost.cs" />
     <Compile Include="Engine\Render\RenderHost.cs" />
     <Compile Include="EntryPoint.cs" />
