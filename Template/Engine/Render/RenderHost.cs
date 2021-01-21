@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EMBC.Inputs;
+using System;
 
 namespace EMBC.Engine.Render
 {
@@ -8,6 +9,7 @@ namespace EMBC.Engine.Render
         #region // storage
 
         public IntPtr HostHandle { get; private set; }
+        public IInput HostInput { get; private set; }
 
         public FpsCounter FpsCounter { get; private set; }
 
@@ -15,9 +17,10 @@ namespace EMBC.Engine.Render
 
         #region // ctor
 
-        protected RenderHost(IntPtr hostHandle)
+        protected RenderHost(IRenderHostSetup renderHostSetup)
         {
-            HostHandle = hostHandle;
+            HostHandle = renderHostSetup.HostHandle;
+            HostInput = renderHostSetup.HostInput;
 
             FpsCounter = new FpsCounter(new TimeSpan(0, 0, 0, 0, 1000));
         }
@@ -26,6 +29,9 @@ namespace EMBC.Engine.Render
         {
             FpsCounter.Dispose();
             FpsCounter = default;
+
+            HostInput.Dispose();
+            HostInput = default;
 
             HostHandle = default;
         }

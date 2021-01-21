@@ -1,4 +1,5 @@
-﻿using EMBC.Win;
+﻿using EMBC.Engine.Render;
+using EMBC.Win;
 using System;
 using System.Drawing;
 
@@ -18,8 +19,8 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region //ctor
 
-        public RenderHost(IntPtr hostHandle) : 
-            base(hostHandle)
+        public RenderHost(IRenderHostSetup renderHostSetup) : 
+            base(renderHostSetup)
         {
             GraphicsHost = Graphics.FromHwnd(HostHandle);
 

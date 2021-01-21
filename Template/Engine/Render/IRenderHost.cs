@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EMBC.Inputs;
+using System;
 
 namespace EMBC.Engine.Render
 {
@@ -6,6 +7,7 @@ namespace EMBC.Engine.Render
         IDisposable
     {
         IntPtr HostHandle { get; }
+        IInput  HostInput { get; }
 
         FpsCounter FpsCounter { get; }
 

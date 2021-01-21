@@ -1,4 +1,5 @@
 ﻿using EMBC.Engine.Render;
+using EMBC.Inputs;
 using EMBC.Utils;
 using EMBC.Win;
 using System;
@@ -15,8 +16,8 @@ namespace EMBC.Client
 
             var renderHosts = new[]
             {
-                CreateWindowForm(size, "Forms Gdi", h => new Drivers.Gdi.Render.RenderHost(h)),
-                CreateWindowWpf(size, "Wpf Gdi", h => new Drivers.Gdi.Render.RenderHost(h))
+                CreateWindowForm(size, "Forms Gdi", rhs => new Drivers.Gdi.Render.RenderHost(rhs)),
+                CreateWindowWpf(size, "Wpf Gdi", rhs => new Drivers.Gdi.Render.RenderHost(rhs))
             };
 
             SortWindows(renderHosts);
@@ -44,7 +45,7 @@ namespace EMBC.Client
             return hostControl;
         }
 
-        private static IRenderHost CreateWindowForm(System.Drawing.Size size, string title, Func<IntPtr, IRenderHost> ctorRenderHost)
+        private static IRenderHost CreateWindowForm(System.Drawing.Size size, string title, Func<IRenderHostSetup, IRenderHost> ctorRenderHost)
         {
             var window = new System.Windows.Forms.Form()
             {
@@ -58,10 +59,10 @@ namespace EMBC.Client
             window.Closed += (sender, args) => System.Windows.Application.Current.Shutdown();
 
             window.Show();
-            return ctorRenderHost(hostControl.Handle);
+            return ctorRenderHost(new RenderHostSetup(hostControl.Handle, new InputForms(hostControl)));
         }
 
-        private static IRenderHost CreateWindowWpf(System.Drawing.Size size, string title, Func<IntPtr, IRenderHost> ctorRenderHost)
+        private static IRenderHost CreateWindowWpf(System.Drawing.Size size, string title, Func<IRenderHostSetup, IRenderHost> ctorRenderHost)
         {
             var window = new System.Windows.Window()
             {
@@ -80,7 +81,7 @@ namespace EMBC.Client
 
             window.Show();
 
-            return ctorRenderHost(hostControl.Handle());
+            return ctorRenderHost(new RenderHostSetup(hostControl.Handle, new InputForms(hostControl)));
         }
 
         private static void SortWindows(IEnumerable<IRenderHost> renderHosts)
