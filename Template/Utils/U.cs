@@ -20,12 +20,13 @@ namespace EMBC.Utils
 
         public static IntPtr Handle(this System.Windows.Forms.IWin32Window window)
         {
-            return window?.Handle ?? default;
+            return window.Handle;
         }
 
         public static IntPtr Handle(this System.Windows.Media.Visual window)
         {
-            return window.HandleSource()?.Handle ?? default;
+            var handleSource = window.HandleSource();
+            return handleSource == null || handleSource.IsDisposed ? default : handleSource.Handle;
         }
 
         public static System.Windows.Interop.HwndSource HandleSource(this System.Windows.Media.Visual window)

@@ -24,6 +24,26 @@ namespace EMBC.Client
             return renderHosts;
         }
 
+        private static System.Windows.Forms.Control CreateHostControl()
+        {
+            var hostControl = new System.Windows.Forms.Panel
+            {
+                Dock = System.Windows.Forms.DockStyle.Fill,
+                BackColor = System.Drawing.Color.Transparent,
+                ForeColor = System.Drawing.Color.Transparent,
+            };
+
+            void EnterFockus(System.Windows.Forms.Control control)
+            {
+                if (!control.Focused) control.Focus();
+            }
+
+            hostControl.MouseEnter += (sender, args) => EnterFockus(hostControl);
+            hostControl.MouseClick += (sender, args) => EnterFockus(hostControl);
+
+            return hostControl;
+        }
+
         private static IRenderHost CreateWindowForm(System.Drawing.Size size, string title, Func<IntPtr, IRenderHost> ctorRenderHost)
         {
             var window = new System.Windows.Forms.Form()
@@ -32,19 +52,8 @@ namespace EMBC.Client
                 Text = title
             };
 
-            var hostControl = new System.Windows.Forms.Panel
-            {
-                Dock = System.Windows.Forms.DockStyle.Fill,
-                BackColor = System.Drawing.Color.Transparent,
-                ForeColor = System.Drawing.Color.Transparent
-            };
+            var hostControl = CreateHostControl();
             window.Controls.Add(hostControl);
-
-            hostControl.MouseEnter += (sender, args) =>
-            {
-                if (System.Windows.Forms.Form.ActiveForm != window) window.Activate();
-                if (!hostControl.Focused) hostControl.Focus();
-            };
 
             window.Closed += (sender, args) => System.Windows.Application.Current.Shutdown();
 
@@ -61,18 +70,11 @@ namespace EMBC.Client
                 Title = title
             };
 
-            var hostControl = new System.Windows.Controls.Grid
-            {
-                Background = System.Windows.Media.Brushes.Transparent,
-                Focusable = true
-            };
-            window.Content = hostControl;
+            var hostControl = CreateHostControl();
+            var windowsFormHost = new System.Windows.Forms.Integration.WindowsFormsHost();
 
-            hostControl.MouseEnter += (sender, args) =>
-            {
-                if (!window.IsActive) window.Activate();
-                if (!hostControl.IsFocused) hostControl.Focus();
-            };
+            windowsFormHost.Child = hostControl;
+            window.Content = windowsFormHost;
 
             window.Closed += (sender, args) => System.Windows.Application.Current.Shutdown();
 
