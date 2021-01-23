@@ -1,4 +1,5 @@
-﻿using EMBC.Inputs;
+﻿using EMBC.Engine.Common;
+using EMBC.Inputs;
 using System;
 using System.Drawing;
 
@@ -13,8 +14,9 @@ namespace EMBC.Engine.Render
         public IInput HostInput { get; private set; }
          
         public FpsCounter FpsCounter { get; private set; }
+        protected Size HostSize { get; private set; }
         protected Size BufferSize { get; private set; }
-        protected Size ViewportSize { get; private set; }
+        protected Viewport Viewport { get; private set; }
 
 
         #endregion
@@ -27,7 +29,8 @@ namespace EMBC.Engine.Render
             HostInput = renderHostSetup.HostInput;
 
             BufferSize = HostInput.Size;
-            ViewportSize = HostInput.Size;
+            HostSize = HostInput.Size;
+            Viewport = new Viewport(Point.Empty, HostInput.Size, 0, 1);
 
             FpsCounter = new FpsCounter(new TimeSpan(0, 0, 0, 0, 1000));
 
@@ -40,7 +43,8 @@ namespace EMBC.Engine.Render
             FpsCounter = default;
 
             BufferSize = default;
-            ViewportSize = default;
+            Viewport = default;
+            HostSize = default;
 
             HostInput.Dispose();
             HostInput = default;
@@ -54,25 +58,38 @@ namespace EMBC.Engine.Render
 
         private void HostInputOnSizeChanged(object sender, ISizeEventArgs args)
         {
-            var size = args.NewSize;
-
-            if (size.Width < 1 || size.Height < 1)
+            Size Sanitize(Size size)
             {
-                size = new Size(1, 1);
+                if (size.Width < 1 || size.Height < 1)
+                {
+                    size = new Size(1, 1);
+                }
+                return size;
             }
 
-            ResizeBuffers(size);
-            ResizeViewpoint(size);
+            var hostsize = Sanitize(HostInput.Size);
+            if (HostSize != hostsize)
+            {
+                ResizeHost(hostsize);
+            }
+
+            var bufferSize = Sanitize(args.NewSize);
+            if (BufferSize != bufferSize)
+            {
+                ResizeBuffers(bufferSize);
+            }
+                
+        }
+
+        protected virtual void ResizeHost(Size size)
+        {
+            HostSize = size;
+            Viewport = new Viewport(Point.Empty, size, 0, 1);
         }
 
         protected virtual void ResizeBuffers(Size size)
         {
             BufferSize = size;
-        }
-
-        protected virtual void ResizeViewpoint(Size size)
-        {
-            ViewportSize = size;
         }
 
 

@@ -29,8 +29,8 @@ namespace EMBC.Drivers.Gdi.Render
         {
             GraphicsHost = Graphics.FromHwnd(HostHandle);
             GraphicsHostDeviceContext = GraphicsHost.GetHdc();
-            CreateBuffers(ViewportSize);
-            CreateViewport(ViewportSize);
+            CreateSurface(HostInput.Size);
+            CreateBuffers(BufferSize);
 
             FontConsloe12 = new Font("Console", 12);
         }
@@ -41,7 +41,7 @@ namespace EMBC.Drivers.Gdi.Render
             FontConsloe12 = default;
 
             DisposeBuffers();
-            DisposeViewport();
+            DisposeSurface();
 
             GraphicsHost.ReleaseHdc(GraphicsHostDeviceContext);
             GraphicsHostDeviceContext = default;
@@ -57,7 +57,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region // routines
 
-        protected override void ResizeBuffers(Size size)
+        protected override void ResizeHost(Size size)
         {
             base.ResizeBuffers(size);
 
@@ -65,12 +65,12 @@ namespace EMBC.Drivers.Gdi.Render
             CreateBuffers(size);
         }
 
-        protected override void ResizeViewpoint(Size size)
+        protected override void ResizeBuffers(Size size)
         {
-            base.ResizeViewpoint(size);
+            base.ResizeBuffers(size);
 
-            DisposeViewport();
-            CreateViewport(size);
+            DisposeBuffers();
+            CreateBuffers(size);
         }
 
         private void CreateBuffers(Size size)
@@ -84,13 +84,13 @@ namespace EMBC.Drivers.Gdi.Render
             BackBuffer = default;
         }
 
-        private void CreateViewport(Size size)
+        private void CreateSurface(Size size)
         {
             BufferedGraphics = BufferedGraphicsManager.Current.Allocate(GraphicsHostDeviceContext, new Rectangle(Point.Empty, size));
             BufferedGraphics.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
         }
 
-        private void DisposeViewport()
+        private void DisposeSurface()
         {
             BufferedGraphics.Dispose();
             BufferedGraphics = default;
@@ -125,10 +125,10 @@ namespace EMBC.Drivers.Gdi.Render
 
             graphics.DrawString(FpsCounter.FpsString, FontConsloe12, Brushes.Red, 0, 0);
             graphics.DrawString($"Buffer = {BufferSize.Width}, {BufferSize.Height}", FontConsloe12, Brushes.Cyan, 0, 16);
-            graphics.DrawString($"Viewport = {ViewportSize.Width}, {ViewportSize.Height}", FontConsloe12, Brushes.Cyan, 0, 32);
+            graphics.DrawString($"Viewport = {Viewport.Width}, {Viewport.Height}", FontConsloe12, Brushes.Cyan, 0, 32);
 
 
-            BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, ViewportSize), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
+            BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, Viewport.Size), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
             BufferedGraphics.Render(GraphicsHostDeviceContext);
         }
 
