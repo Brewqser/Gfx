@@ -54,8 +54,6 @@ namespace EMBC.Inputs
             Control.KeyUp -= ControlOnKeyUp;
 
             Control = default;
-
-            base.Dispose();
         }
 
         #endregion
