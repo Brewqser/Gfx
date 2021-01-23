@@ -1,10 +1,12 @@
-﻿using EMBC.Engine.Render;
+﻿using EMBC.Engine.Common;
+using EMBC.Engine.Render;
 using EMBC.Utils;
 using EMBC.Win;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace EMBC.Drivers.Gdi.Render
 {
@@ -24,7 +26,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region //ctor
 
-        public RenderHost(IRenderHostSetup renderHostSetup) : 
+        public RenderHost(IRenderHostSetup renderHostSetup) :
             base(renderHostSetup)
         {
             GraphicsHost = Graphics.FromHwnd(HostHandle);
@@ -49,7 +51,7 @@ namespace EMBC.Drivers.Gdi.Render
             GraphicsHost.Dispose();
             GraphicsHost = default;
 
-            base.Dispose(); 
+            base.Dispose();
         }
 
         #endregion
@@ -59,10 +61,10 @@ namespace EMBC.Drivers.Gdi.Render
 
         protected override void ResizeHost(Size size)
         {
-            base.ResizeBuffers(size);
+            base.ResizeHost(size);
 
-            DisposeBuffers();
-            CreateBuffers(size);
+            DisposeSurface();
+            CreateSurface(size);
         }
 
         protected override void ResizeBuffers(Size size)
@@ -123,6 +125,14 @@ namespace EMBC.Drivers.Gdi.Render
                 BackBuffer.Buffer[index] = GetColor(x, y).ToArgb();
             });
 
+            DrawLineScreenSpace(graphics, Pens.White, new Point3D(100, 100, 0), new Point3D(100, 200, 0));
+            DrawLineScreenSpace(graphics, Pens.White, new Point3D(100, 200, 0), new Point3D(300, 200, 0));
+            DrawLineScreenSpace(graphics, Pens.White, new Point3D(300, 200, 0), new Point3D(100, 100, 0));
+
+            DrawLineViewSpace(graphics, Pens.Black, new Point3D(0, 0, 0), new Point3D(0, -0.9f, 0));
+            DrawLineViewSpace(graphics, Pens.Black, new Point3D(0, -0.9f, 0), new Point3D(0.9f, -0.9f, 0));
+            DrawLineViewSpace(graphics, Pens.Black, new Point3D(0.9f, -0.9f, 0), new Point3D(0, 0, 0));
+
             graphics.DrawString(FpsCounter.FpsString, FontConsloe12, Brushes.Red, 0, 0);
             graphics.DrawString($"Buffer = {BufferSize.Width}, {BufferSize.Height}", FontConsloe12, Brushes.Cyan, 0, 16);
             graphics.DrawString($"Viewport = {Viewport.Width}, {Viewport.Height}", FontConsloe12, Brushes.Cyan, 0, 32);
@@ -130,6 +140,28 @@ namespace EMBC.Drivers.Gdi.Render
 
             BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, Viewport.Size), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
             BufferedGraphics.Render(GraphicsHostDeviceContext);
+        }
+
+        private void DrawLineScreenSpace(Graphics graphics, Pen pen, Point3D startScreen, Point3D endScreen)
+        {
+            graphics.DrawLine(pen, (float)startScreen.X, (float)startScreen.Y, (float)endScreen.X, (float)endScreen.Y);
+        }
+
+        private static Point3D TransformFromViewSpaceToScreenSpace(Viewport viewport, Point3D point)
+        {
+            return new Point3D
+            (
+                (point.X + 1) * 0.5 * viewport.Width + viewport.X,
+                (1 - point.Y) * 0.5 * viewport.Height + viewport.Y,
+                0
+            );
+        }
+
+        private void DrawLineViewSpace(Graphics graphics, Pen pen, Point3D startView, Point3D endView)
+        {
+            var startScreen = TransformFromViewSpaceToScreenSpace(Viewport, startView);
+            var endScreen = TransformFromViewSpaceToScreenSpace(Viewport, endView);
+            DrawLineScreenSpace(graphics, pen, startScreen, endScreen);
         }
 
         #endregion

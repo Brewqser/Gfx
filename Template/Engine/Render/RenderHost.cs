@@ -28,9 +28,9 @@ namespace EMBC.Engine.Render
             HostHandle = renderHostSetup.HostHandle;
             HostInput = renderHostSetup.HostInput;
 
-            BufferSize = HostInput.Size;
             HostSize = HostInput.Size;
-            Viewport = new Viewport(Point.Empty, HostInput.Size, 0, 1);
+            BufferSize = HostInput.Size;
+            Viewport = new Viewport(Point.Empty, HostSize, 0, 1);
 
             FpsCounter = new FpsCounter(new TimeSpan(0, 0, 0, 0, 1000));
 
@@ -42,8 +42,8 @@ namespace EMBC.Engine.Render
             FpsCounter.Dispose();
             FpsCounter = default;
 
-            BufferSize = default;
             Viewport = default;
+            BufferSize = default;
             HostSize = default;
 
             HostInput.Dispose();
