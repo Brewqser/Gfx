@@ -1,4 +1,4 @@
-﻿using EMBC.Engine.Common;
+﻿ using EMBC.Engine.Common;
 using EMBC.Inputs;
 using System;
 using System.Drawing;
@@ -17,6 +17,7 @@ namespace EMBC.Engine.Render
         protected Size HostSize { get; private set; }
         protected Size BufferSize { get; private set; }
         protected Viewport Viewport { get; private set; }
+        protected DateTime FrameStarted { get; private set; }
 
 
         #endregion
@@ -99,10 +100,9 @@ namespace EMBC.Engine.Render
 
         public void Render()
         {
+            FrameStarted = DateTime.UtcNow;
             FpsCounter.StartFrame();
-
             RenderInternal();
-
             FpsCounter.StopFrame();
         }
 
