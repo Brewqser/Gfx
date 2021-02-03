@@ -1,6 +1,7 @@
 ﻿using EMBC.Common.Camera;
 using EMBC.Inputs;
 using System;
+using System.Drawing;
 
 namespace EMBC.Engine.Render
 {
@@ -9,6 +10,8 @@ namespace EMBC.Engine.Render
     {
         IntPtr HostHandle { get; }
         IInput  HostInput { get; }
+
+        Size HostSize { get; }
 
         ICameraInfo CameraInfo { get; set; }
 

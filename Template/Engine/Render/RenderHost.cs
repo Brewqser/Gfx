@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using MathNet.Spatial.Euclidean;
 using EMBC.Common.Camera;
 using EMBC.Common.Camera.Projections;
 using EMBC.Inputs;
+using EMBC.Engine.Operators;
+using EMBC.Utils;
 
 namespace EMBC.Engine.Render
 {
@@ -16,7 +19,7 @@ namespace EMBC.Engine.Render
         public IInput HostInput { get; private set; }
          
         public FpsCounter FpsCounter { get; private set; }
-        protected Size HostSize { get; private set; }
+        public Size HostSize { get; private set; }
         protected Size BufferSize { get; private set; }
         private ICameraInfo m_CameraInfo;
         public ICameraInfo CameraInfo
@@ -28,6 +31,8 @@ namespace EMBC.Engine.Render
                 CameraInfoChanged?.Invoke(this, m_CameraInfo);
             }
         }
+
+        protected IEnumerable<IOperator> Operators { get; set; }
 
         protected DateTime FrameStarted { get; private set; }
 
@@ -59,16 +64,22 @@ namespace EMBC.Engine.Render
                 //new ProjectionOrthographic(0.001, 1000, 2, 2),
                 new Viewport(0, 0, 1, 1, 0, 1)
             );
-
             FpsCounter = new FpsCounter(new TimeSpan(0, 0, 0, 0, 1000));
 
-            HostInput.SizeChanged += HostInputOnSizeChanged;
+            Operators = new List<IOperator>
+            {
+                new OperatorResize(this, ResizeHost),
+            };
 
-            HostInputOnSizeChanged(this, new SizeEventArgs(HostSize));
+
+            OperatorResize.Resize(this, HostSize, ResizeHost);
         }
 
         public virtual void Dispose()
         {
+            Operators.ForEach(o => o.Dispose());
+            Operators = default;
+
             FpsCounter.Dispose();
             FpsCounter = default;
 
@@ -85,46 +96,6 @@ namespace EMBC.Engine.Render
         #endregion
 
         #region //routines
-
-        private void HostInputOnSizeChanged(object sender, ISizeEventArgs args)
-        {
-            Size Sanitize(Size size)
-            {
-                if (size.Width < 1 || size.Height < 1)
-                {
-                    size = new Size(1, 1);
-                }
-                return size;
-            }
-
-            var hostSize = Sanitize(args.NewSize);
-            if (HostSize != hostSize)
-            {
-                ResizeHost(hostSize);
-            }
-
-            var cameraInfo = CameraInfo;
-            if (cameraInfo.Viewport.Size != hostSize)
-            {
-                var viewport = new Viewport
-                (
-                    cameraInfo.Viewport.X,
-                    cameraInfo.Viewport.Y,
-                    hostSize.Width,
-                    hostSize.Height,
-                    cameraInfo.Viewport.MinZ,
-                    cameraInfo.Viewport.MaxZ
-                );
-                CameraInfo = new CameraInfo
-                (
-                    cameraInfo.Position,
-                    cameraInfo.Target,
-                    cameraInfo.UpVector,
-                    cameraInfo.Projection.GetAdjustedProjection(viewport.AspectRatio),
-                    viewport
-                );
-            }
-        }
 
         protected virtual void ResizeHost(Size size)
         {
