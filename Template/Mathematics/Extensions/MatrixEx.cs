@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Spatial.Euclidean;
-using EMBC.Engine.Common;
+using EMBC.Common.Camera;
 
 namespace EMBC.Mathematics.Extensions
 {

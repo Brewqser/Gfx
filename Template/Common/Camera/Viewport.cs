@@ -1,4 +1,4 @@
-﻿namespace EMBC.Engine.Common
+﻿namespace EMBC.Common.Camera
 {
     public struct Viewport
     {

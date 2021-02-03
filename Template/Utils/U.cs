@@ -5,6 +5,11 @@ namespace EMBC.Utils
 {
     public static class U
     {
+        public static T Cloned<T>(this T cloneable) where T : ICloneable
+        {
+            return (T)cloneable.Clone();
+        }
+
         public static void ForEach<T> (this IEnumerable<T> collection, Action<T> action)
         {
             foreach (var item in collection)
