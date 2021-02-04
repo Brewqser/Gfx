@@ -1,5 +1,6 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Spatial.Euclidean;
 
 namespace EMBC.Common.Camera.Projections
 {
@@ -13,5 +14,7 @@ namespace EMBC.Common.Camera.Projections
         Matrix<double> GetMatrixProjection();
 
         IProjection GetAdjustedProjection(double aspectRatio);
+
+        Ray3D GetMouseRay(ICameraInfo cameraInfo, Point3D mouseWorld);
     }
 }

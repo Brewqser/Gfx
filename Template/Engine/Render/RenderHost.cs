@@ -70,6 +70,7 @@ namespace EMBC.Engine.Render
             {
                 new OperatorResize(this, ResizeHost), 
                 new OperatorCameraZoom(this),
+                new OperatorCameraPan(this),
             };
 
 

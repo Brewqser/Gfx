@@ -19,7 +19,9 @@ namespace EMBC.Common.Camera
 
         public Viewport Viewport { get; }
 
-        public ICameraInfoCache Cache { get; }
+        private ICameraInfoCache m_Cache;
+
+        public ICameraInfoCache Cache => m_Cache ?? (m_Cache = new CameraInfoCache(this));
 
         #endregion
 
@@ -32,7 +34,6 @@ namespace EMBC.Common.Camera
             UpVector = upVector;
             Projection = projection;
             Viewport = viewport;
-            Cache = new CameraInfoCache(this);
         }
 
         #endregion
