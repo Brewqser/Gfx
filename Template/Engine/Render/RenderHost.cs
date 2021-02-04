@@ -68,7 +68,8 @@ namespace EMBC.Engine.Render
 
             Operators = new List<IOperator>
             {
-                new OperatorResize(this, ResizeHost),
+                new OperatorResize(this, ResizeHost), 
+                new OperatorCameraZoom(this),
             };
 
 
