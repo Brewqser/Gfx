@@ -4,6 +4,7 @@ using MathNet.Spatial.Euclidean;
 using EMBC.Common.Camera;
 using EMBC.Engine.Render;
 using EMBC.Utils;
+using EMBC.Materials;
 
 namespace EMBC.Client
 {
@@ -33,7 +34,7 @@ namespace EMBC.Client
             while (!Dispatcher.HasShutdownStarted)
             {
 
-                Render(RenderHosts);
+                Render(RenderHosts, Seed.GetPrimitives());
                 System.Windows.Forms.Application.DoEvents();
             }
         }
@@ -49,9 +50,10 @@ namespace EMBC.Client
 
         #region //routines
 
-        private static void Render(IEnumerable<IRenderHost> renderhosts)
+        private static void Render(IEnumerable<IRenderHost> renderHosts, IEnumerable<IPrimitive> primitives)
         {
-            renderhosts.ForEach(rh => rh.Render());
+            renderHosts.ForEach(rh => rh.Render(primitives));
+            
         }
 
         #endregion

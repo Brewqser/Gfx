@@ -6,6 +6,7 @@ using EMBC.Common.Camera;
 using EMBC.Common.Camera.Projections;
 using EMBC.Inputs;
 using EMBC.Engine.Operators;
+using EMBC.Materials;
 using EMBC.Utils;
 
 namespace EMBC.Engine.Render
@@ -124,16 +125,16 @@ namespace EMBC.Engine.Render
 
         #region //render
 
-        public void Render()
+        public void Render(IEnumerable<IPrimitive> primitives)
         {
             EnsureBufferSize();
             FrameStarted = DateTime.UtcNow;
             FpsCounter.StartFrame();
-            RenderInternal();
+            RenderInternal(primitives);
             FpsCounter.StopFrame();
         }
 
-        protected abstract void RenderInternal();
+        protected abstract void RenderInternal(IEnumerable<IPrimitive> primitives);
 
         #endregion
 

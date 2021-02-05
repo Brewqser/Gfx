@@ -1,7 +1,9 @@
 ﻿using EMBC.Common.Camera;
 using EMBC.Inputs;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using EMBC.Materials;
 
 namespace EMBC.Engine.Render
 {
@@ -17,7 +19,7 @@ namespace EMBC.Engine.Render
 
         FpsCounter FpsCounter { get; }
 
-        void Render();
+        void Render(IEnumerable<IPrimitive> primitives);
 
         event EventHandler<ICameraInfo> CameraInfoChanged;
 

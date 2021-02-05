@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using EMBC.Engine.Render;
+using EMBC.Materials;
 using EMBC.Mathematics;
 using EMBC.Mathematics.Extensions;
 using EMBC.Utils;
@@ -103,18 +104,33 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region // render
 
-        protected override void RenderInternal()
+        protected override void RenderInternal(IEnumerable<IPrimitive> primitives)
         {
             var graphics = BackBuffer.Graphics;
             graphics.Clear(Color.Black);
-            
-            DrawWorldAxis();
-            DrawGeometry();
+
+            DrawPrimitives(primitives);
 
             graphics.DrawString(FpsCounter.FpsString, FontConsloe12, Brushes.Red, 0, 0);
 
             BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, HostSize), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
             BufferedGraphics.Render(GraphicsHostDeviceContext);
+        }
+
+        private void DrawPrimitives(IEnumerable<IPrimitive> primitives)
+        {
+            foreach (var primitive in primitives.OfType<Materials.Position.IPrimitive>())
+            {
+                using (var pen = new Pen(primitive.Material.Color))
+                {
+                    switch (primitive.PrimitiveTopology)
+                    {
+                        case PrimitiveTopology.LineStrip:
+                            DrawPolyline(primitive.Vertices.Select(vertex => vertex.Position), primitive.PrimitiveBehaviour.Space, pen);
+                            break;
+                    }
+                }
+            }
         }
 
 
@@ -149,81 +165,6 @@ namespace EMBC.Drivers.Gdi.Render
                     BackBuffer.Graphics.DrawLine(pen, (float)form.Value.X, (float)form.Value.Y, (float)pointScreen.X, (float)pointScreen.Y);
                 }
                 form = pointScreen;
-            }
-        }
-
-        private double GetDeltaTime(TimeSpan periodDuration)
-        {
-            return GetDeltaTime(FrameStarted, periodDuration);
-        }
-
-        public static double GetDeltaTime(DateTime timestamp, TimeSpan periodDuration)
-        {
-            return (timestamp.Second * 1000 + timestamp.Millisecond) % periodDuration.TotalMilliseconds / periodDuration.TotalMilliseconds;
-        }
-
-        private void DrawWorldAxis()
-        {
-            DrawPolyline(new[] { new Point3D(0, 0, 0), new Point3D(1, 0, 0), }, Space.World, Pens.Red);
-            DrawPolyline(new[] { new Point3D(0, 0, 0), new Point3D(0, 1, 0), }, Space.World, Pens.LawnGreen);
-            DrawPolyline(new[] { new Point3D(0, 0, 0), new Point3D(0, 0, 1), }, Space.World, Pens.Blue);
-        }
-
-        private static readonly Point3D[][] CubePolylines = new[]
-        {
-            new[]
-            {
-                new Point3D(0, 0, 0),
-                new Point3D(1, 0, 0),
-                new Point3D(1, 1, 0),
-                new Point3D(0, 1, 0),
-                new Point3D(0, 0, 0),
-            },
-            new[]
-            {
-                new Point3D(0, 0, 1),
-                new Point3D(1, 0, 1),
-                new Point3D(1, 1, 1),
-                new Point3D(0, 1, 1),
-                new Point3D(0, 0, 1),
-            },
-            new[] { new Point3D(0, 0, 0), new Point3D(0, 0, 1), },
-            new[] { new Point3D(1, 0, 0), new Point3D(1, 0, 1), },
-            new[] { new Point3D(1, 1, 0), new Point3D(1, 1, 1), },
-            new[] { new Point3D(0, 1, 0), new Point3D(0, 1, 1), },
-        }.Select(cubePolyline => MatrixEx.Translate(-0.5, -0.5, -0.5).Transform(cubePolyline).ToArray()).ToArray();
-
-        private void DrawGeometry()
-        {
-            // screen space
-            DrawPolyline(new[] { new Point3D(3, 20, 0), new Point3D(140, 20, 0) }, Space.Screen, Pens.Gray);
-
-            // view space
-            DrawPolyline(new[] { new Point3D(-0.9, -0.9, 0), new Point3D(0.9, -0.9, 0) }, Space.View, Pens.Gray);
-
-            // bigger cube
-            var angle = GetDeltaTime(new TimeSpan(0, 0, 0, 5)) * Math.PI * 2;
-            var matrixModel =
-                MatrixEx.Scale(0.5) *
-                MatrixEx.Rotate(new UnitVector3D(1, 0, 0), angle) *
-                MatrixEx.Translate(1, 0, 0);
-
-            foreach (var cubePolyline in CubePolylines)
-            {
-                DrawPolyline(matrixModel.Transform(cubePolyline), Space.World, Pens.White);
-            }
-
-            // smaller cube
-            angle = GetDeltaTime(new TimeSpan(0, 0, 0, 1)) * Math.PI * 2;
-            matrixModel =
-                MatrixEx.Scale(0.5) *
-                MatrixEx.Rotate(new UnitVector3D(0, 1, 0), angle) *
-                MatrixEx.Translate(0, 1, 0) *
-                matrixModel;
-
-            foreach (var cubePolyline in CubePolylines)
-            {
-                DrawPolyline(matrixModel.Transform(cubePolyline), Space.World, Pens.Yellow);
             }
         }
 
