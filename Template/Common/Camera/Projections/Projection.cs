@@ -1,4 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using EMBC.Mathematics;
 using MathNet.Spatial.Euclidean;
 
 namespace EMBC.Common.Camera.Projections
@@ -28,7 +28,7 @@ namespace EMBC.Common.Camera.Projections
 
         public abstract object Clone();
 
-        public abstract Matrix<double> GetMatrixProjection();
+        public abstract Matrix4D GetMatrixProjection();
 
         public abstract IProjection GetAdjustedProjection(double aspectRatio);
 

@@ -36,11 +36,11 @@ namespace EMBC.Client
             new[] { new Vector3F(1, 0, 0), new Vector3F(1, 0, 1), },
             new[] { new Vector3F(1, 1, 0), new Vector3F(1, 1, 1), },
             new[] { new Vector3F(0, 1, 0), new Vector3F(0, 1, 1), },
-        }.Select(polyline => MatrixEx.Translate(-0.5, -0.5, -0.5).Transform(polyline).ToArray()).ToArray();
+        }.Select(polyline => Matrix4DEx.Translate(-0.5, -0.5, -0.5).Transform(polyline).ToArray()).ToArray();
 
         private static readonly IPrimitive[] PointCloudBunny = new Func<IPrimitive[]>(() =>
         {
-            var matrix = MatrixEx.Scale(10) * MatrixEx.Rotate(QuaternionEx.AroundAxis(UnitVector3D.XAxis, Math.PI * 0.5));
+            var matrix = Matrix4DEx.Scale(10) * Matrix4DEx.Rotate(QuaternionEx.AroundAxis(UnitVector3D.XAxis, Math.PI * 0.5));
 
             // point cloud source: http://graphics.stanford.edu/data/3Dscanrep/
             var vertices = StreamPointCloud_XYZ(@"..\..\..\resources\bunny.xyz")
@@ -143,9 +143,9 @@ namespace EMBC.Client
 
             var angle = GetTimeSpanPeriodRatio(duration, new TimeSpan(0, 0, 0, 5)) * Math.PI * 2;
             var matrixModel =
-                MatrixEx.Scale(0.5) *
-                MatrixEx.Rotate(new UnitVector3D(1, 0, 0), angle) *
-                MatrixEx.Translate(1, 0, 0);
+                Matrix4DEx.Scale(0.5) *
+                Matrix4DEx.Rotate(new UnitVector3D(1, 0, 0), angle) *
+                Matrix4DEx.Translate(1, 0, 0);
 
             foreach (var cubePolyline in CubePolylines)
             {
@@ -160,9 +160,9 @@ namespace EMBC.Client
 
             angle = GetTimeSpanPeriodRatio(duration, new TimeSpan(0, 0, 0, 1)) * Math.PI * 2;
             matrixModel =
-                MatrixEx.Scale(0.5) *
-                MatrixEx.Rotate(new UnitVector3D(0, 1, 0), angle) *
-                MatrixEx.Translate(0, 1, 0) *
+                Matrix4DEx.Scale(0.5) *
+                Matrix4DEx.Rotate(new UnitVector3D(0, 1, 0), angle) *
+                Matrix4DEx.Translate(0, 1, 0) *
                 matrixModel;
 
             foreach (var cubePolyline in CubePolylines)

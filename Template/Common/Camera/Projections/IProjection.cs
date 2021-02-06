@@ -1,5 +1,5 @@
 ﻿using System;
-using MathNet.Numerics.LinearAlgebra;
+using EMBC.Mathematics;
 using MathNet.Spatial.Euclidean;
 
 namespace EMBC.Common.Camera.Projections
@@ -11,7 +11,7 @@ namespace EMBC.Common.Camera.Projections
 
         double FarPlane { get; }
 
-        Matrix<double> GetMatrixProjection();
+        Matrix4D GetMatrixProjection();
 
         IProjection GetAdjustedProjection(double aspectRatio);
 

@@ -1,6 +1,7 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using EMBC.Mathematics.Extensions;
 using MathNet.Spatial.Euclidean;
+using EMBC.Mathematics;
 
 namespace EMBC.Common.Camera.Projections
 {
@@ -34,9 +35,9 @@ namespace EMBC.Common.Camera.Projections
             return new ProjectionPerspective(NearPlane, FarPlane, FieldOfViewY, AspectRatio);
         }
 
-        public override Matrix<double> GetMatrixProjection()
+        public override Matrix4D GetMatrixProjection()
         {
-            return MatrixEx.PerspectiveFovRH(FieldOfViewY, AspectRatio, NearPlane, FarPlane);
+            return Matrix4DEx.PerspectiveFovRH(FieldOfViewY, AspectRatio, NearPlane, FarPlane);
         }
 
         public override IProjection GetAdjustedProjection(double aspectRatio)

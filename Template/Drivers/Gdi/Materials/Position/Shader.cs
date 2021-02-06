@@ -10,7 +10,7 @@ namespace EMBC.Drivers.Gdi.Materials.Position
     {
         #region // storage
 
-        private Matrix<double> MatrixWorldViewProjection { get; set; } = MatrixEx.Identity;
+        private Matrix4D MatrixWorldViewProjection { get; set; } = Matrix4D.Identity;
 
         private Vector4F Color { get; set; } = new Vector4F(0, 0, 0, 0);
 
@@ -18,7 +18,7 @@ namespace EMBC.Drivers.Gdi.Materials.Position
 
         #region // routines
 
-        public void Update(Matrix<double> matrixWorldViewProjection, System.Drawing.Color color)
+        public void Update(Matrix4D matrixWorldViewProjection, System.Drawing.Color color)
         {
             MatrixWorldViewProjection = matrixWorldViewProjection;
             Color = color.ToVector4F();

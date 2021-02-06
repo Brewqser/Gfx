@@ -22,7 +22,7 @@ namespace EMBC.Engine.Operators
 
         #endregion
 
-        #region ctor
+        #region // ctor
 
         public OperatorCameraOrbit(IRenderHost renderHost) :
             base(renderHost)
@@ -89,7 +89,7 @@ namespace EMBC.Engine.Operators
             var xAxis = yzPlane.Normal;
             var xzPlane = new Plane(new Point3D(), zAxis.ToPoint3D(), xAxis.ToPoint3D());
             var yAxis = xzPlane.Normal;
-            var matrixWorldToLocal = (Matrix<double>)new CoordinateSystem(new Point3D(), xAxis, yAxis, zAxis);
+            var matrixWorldToLocal = Matrix4DEx.CoordinateSystem(new Point3D(), xAxis, yAxis, zAxis);
 
             orbitOrigin = matrixWorldToLocal.Transform(orbitOrigin);
             eye = matrixWorldToLocal.Transform(eye);
@@ -97,12 +97,12 @@ namespace EMBC.Engine.Operators
 
             GetSphereAngles(mouseOffsetView, (target - eye).Normalize(), out var thetaDelta, out var phiDelta);
 
-            var matrixRotationHorizontal = MatrixEx.Rotate(UnitVector3D.ZAxis, thetaDelta.Radians).TransformAround(orbitOrigin);
+            var matrixRotationHorizontal = Matrix4DEx.Rotate(UnitVector3D.ZAxis, thetaDelta.Radians).TransformAround(orbitOrigin);
             eye = matrixRotationHorizontal.Transform(eye);
             target = matrixRotationHorizontal.Transform(target);
 
             var phiPlane = new Plane(eye, target, target + UnitVector3D.ZAxis);
-            var matrixRotationVertical = MatrixEx.Rotate(phiPlane.Normal, phiDelta.Radians).TransformAround(orbitOrigin);
+            var matrixRotationVertical = Matrix4DEx.Rotate(phiPlane.Normal, phiDelta.Radians).TransformAround(orbitOrigin);
             eye = matrixRotationVertical.Transform(eye);
             target = matrixRotationVertical.Transform(target);
 

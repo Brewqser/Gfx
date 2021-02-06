@@ -12,7 +12,7 @@ namespace EMBC.Common.Camera
 
         public static UnitVector3D GetEyeDirection(this ICameraInfo cameraInfo) => cameraInfo.GetEyeVector().Normalize();
 
-        public static Matrix<double> GetTransformationMatrix(this ICameraInfo cameraInfo, Space from, Space to)
+        public static Matrix4D GetTransformationMatrix(this ICameraInfo cameraInfo, Space from, Space to)
         {
             switch (from)
             {
@@ -20,7 +20,7 @@ namespace EMBC.Common.Camera
                     switch (to)
                     {
                         case Space.World:
-                            return MatrixEx.Identity;
+                            return Matrix4D.Identity;
 
                         case Space.View:
                             return cameraInfo.Cache.MatrixViewProjection;
@@ -39,7 +39,7 @@ namespace EMBC.Common.Camera
                             return cameraInfo.Cache.MatrixViewProjectionInverse;
 
                         case Space.View:
-                            return MatrixEx.Identity;
+                            return Matrix4D.Identity;
 
                         case Space.Screen:
                             return cameraInfo.Cache.MatrixViewport;
@@ -58,7 +58,7 @@ namespace EMBC.Common.Camera
                             return cameraInfo.Cache.MatrixViewportInverse;
 
                         case Space.Screen:
-                            return MatrixEx.Identity;
+                            return Matrix4D.Identity;
 
                         default:
                             throw new ArgumentOutOfRangeException(nameof(to), to, null);

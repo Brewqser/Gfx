@@ -1,28 +1,28 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using EMBC.Mathematics;
 
 namespace EMBC.Common.Camera
 {
 
     public interface ICameraInfoCache
     {
-        Matrix<double> MatrixView { get; }
+        Matrix4D MatrixView { get; }
 
-        Matrix<double> MatrixViewInverse { get; }
+        Matrix4D MatrixViewInverse { get; }
 
-        Matrix<double> MatrixProjection { get; }
+        Matrix4D MatrixProjection { get; }
 
-        Matrix<double> MatrixProjectionInverse { get; }
+        Matrix4D MatrixProjectionInverse { get; }
 
-        Matrix<double> MatrixViewport { get; }
+        Matrix4D MatrixViewport { get; }
 
-        Matrix<double> MatrixViewportInverse { get; }
+        Matrix4D MatrixViewportInverse { get; }
 
-        Matrix<double> MatrixViewProjection { get; }
+        Matrix4D MatrixViewProjection { get; }
 
-        Matrix<double> MatrixViewProjectionInverse { get; }
+        Matrix4D MatrixViewProjectionInverse { get; }
 
-        Matrix<double> MatrixViewProjectionViewport { get; }
+        Matrix4D MatrixViewProjectionViewport { get; }
 
-        Matrix<double> MatrixViewProjectionViewportInverse { get; }
+        Matrix4D MatrixViewProjectionViewportInverse { get; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using EMBC.Mathematics;
 using EMBC.Mathematics.Extensions;
 
 namespace EMBC.Common.Camera
@@ -8,25 +8,25 @@ namespace EMBC.Common.Camera
     {
         #region // storage
 
-        public Matrix<double> MatrixView { get; }
+        public Matrix4D MatrixView { get; }
 
-        public Matrix<double> MatrixViewInverse { get; }
+        public Matrix4D MatrixViewInverse { get; }
 
-        public Matrix<double> MatrixProjection { get; }
+        public Matrix4D MatrixProjection { get; }
 
-        public Matrix<double> MatrixProjectionInverse { get; }
+        public Matrix4D MatrixProjectionInverse { get; }
 
-        public Matrix<double> MatrixViewport { get; }
+        public Matrix4D MatrixViewport { get; }
 
-        public Matrix<double> MatrixViewportInverse { get; }
+        public Matrix4D MatrixViewportInverse { get; }
 
-        public Matrix<double> MatrixViewProjection { get; }
+        public Matrix4D MatrixViewProjection { get; }
 
-        public Matrix<double> MatrixViewProjectionInverse { get; }
+        public Matrix4D MatrixViewProjectionInverse { get; }
 
-        public Matrix<double> MatrixViewProjectionViewport { get; }
+        public Matrix4D MatrixViewProjectionViewport { get; }
 
-        public Matrix<double> MatrixViewProjectionViewportInverse { get; }
+        public Matrix4D MatrixViewProjectionViewportInverse { get; }
 
         #endregion
 
@@ -34,13 +34,13 @@ namespace EMBC.Common.Camera
 
         public CameraInfoCache(ICameraInfo cameraInfo)
         {
-            MatrixView = MatrixEx.LookAtRH(cameraInfo.Position.ToVector3D(), cameraInfo.Target.ToVector3D(), cameraInfo.UpVector);
+            MatrixView = Matrix4DEx.LookAtRH(cameraInfo.Position.ToVector3D(), cameraInfo.Target.ToVector3D(), cameraInfo.UpVector);
             MatrixViewInverse = MatrixView.Inverse();
 
             MatrixProjection = cameraInfo.Projection.GetMatrixProjection();
             MatrixProjectionInverse = MatrixProjection.Inverse();
 
-            MatrixViewport = MatrixEx.Viewport(cameraInfo.Viewport);
+            MatrixViewport = Matrix4DEx.Viewport(cameraInfo.Viewport);
             MatrixViewportInverse = MatrixViewport.Inverse();
 
             MatrixViewProjection = MatrixView * MatrixProjection;
