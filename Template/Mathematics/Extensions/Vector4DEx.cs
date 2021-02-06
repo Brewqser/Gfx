@@ -17,6 +17,11 @@ namespace EMBC.Mathematics.Extensions
             return new Vector4D(value.X, value.Y, value.Z, w);
         }
 
+        public static Vector4D ToVector4D(this in UnitVector3D value, double w)
+        {
+            return new Vector4D(value.X, value.Y, value.Z, w);
+        }
+
         public static Vector4D ToVector4D(this in Point2D value, double z, double w)
         {
             return new Vector4D(value.X, value.Y, z, w);
@@ -72,16 +77,5 @@ namespace EMBC.Mathematics.Extensions
         }
 
         #endregion
-
-        public static Vector4D Transform(this Matrix<double> m, in Vector4D value)
-        {
-            return new Vector4D
-            (
-                m[0, 0] * value.X + m[1, 0] * value.Y + m[2, 0] * value.Z + m[3, 0] * value.W,
-                m[0, 1] * value.X + m[1, 1] * value.Y + m[2, 1] * value.Z + m[3, 1] * value.W,
-                m[0, 2] * value.X + m[1, 2] * value.Y + m[2, 2] * value.Z + m[3, 2] * value.W,
-                m[0, 3] * value.X + m[1, 3] * value.Y + m[2, 3] * value.Z + m[3, 3] * value.W
-            );
-        }
     }
 }

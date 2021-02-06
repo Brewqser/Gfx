@@ -6,26 +6,24 @@ using System.Runtime.InteropServices;
 namespace EMBC.Utils
 {
     public class DirectBitmap :
+        Buffer2D<int>,
         IDisposable
     {
         #region // storage
 
-        public Size Size { get; }
-        public int Width => Size.Width;
-        public int Height => Size.Height;
-        public int[] Buffer { get; private set; }
         private GCHandle BufferHandle { get; set; }
+
         public Bitmap Bitmap { get; private set; }
+
         public Graphics Graphics { get; private set; }
 
         #endregion
 
         #region // ctor
 
-        public DirectBitmap(Size size)
+        public DirectBitmap(Size size) :
+            base(size)
         {
-            Size = size;
-            Buffer = new int[Width * Height];
             BufferHandle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
             Bitmap = new Bitmap(Width, Height, Width * 4, PixelFormat.Format32bppPArgb, BufferHandle.AddrOfPinnedObject());
             Graphics = Graphics.FromImage(Bitmap);
@@ -46,29 +44,17 @@ namespace EMBC.Utils
 
             BufferHandle.Free();
             BufferHandle = default;
-
-            Buffer = default;
         }
 
         #endregion
 
         #region // routines
 
-        public int GetIndex(int x, int y) => x + y * Width;
+        public void SetPixel(int x, int y, Color color) => SetValue(x, y, color.ToArgb());
 
-        public void GetXY(int index, out int x, out int y)
-        {
-            y = index / Width;
-            x = index - y * Width;
-        }
+        public Color GetPixel(int x, int y) => Color.FromArgb(GetValue(x, y));
 
-        public void SetArgb(int x, int y, int argb) => Buffer[GetIndex(x, y)] = argb;
-
-        public int GetArgb(int x, int y) => Buffer[GetIndex(x, y)];
-
-        public void SetPixel(int x, int y, Color color) => SetArgb(x, y, color.ToArgb());
-
-        public Color GetPixel(int x, int y) => Color.FromArgb(GetArgb(x, y));
+        public void Clear(Color color) => Clear(color.ToArgb());
 
         #endregion
     }

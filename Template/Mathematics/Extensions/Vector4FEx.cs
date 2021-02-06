@@ -21,6 +21,7 @@ namespace EMBC.Mathematics.Extensions
         {
             return new Vector4F((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
         }
+
         public static Vector4F ToVector4F(this Point2D value, float z, float w)
         {
             return new Vector4F((float)value.X, (float)value.Y, z, w);
@@ -116,16 +117,5 @@ namespace EMBC.Mathematics.Extensions
         }
 
         #endregion
-
-        public static Vector4F Transform(this Matrix<double> m, in Vector4F value)
-        {
-            return new Vector4F
-            (
-                (float)(m[0, 0] * value.X + m[1, 0] * value.Y + m[2, 0] * value.Z + m[3, 0] * value.W),
-                (float)(m[0, 1] * value.X + m[1, 1] * value.Y + m[2, 1] * value.Z + m[3, 1] * value.W),
-                (float)(m[0, 2] * value.X + m[1, 2] * value.Y + m[2, 2] * value.Z + m[3, 2] * value.W),
-                (float)(m[0, 3] * value.X + m[1, 3] * value.Y + m[2, 3] * value.Z + m[3, 3] * value.W)
-            );
-        }
     }
 }

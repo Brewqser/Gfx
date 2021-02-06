@@ -3,30 +3,36 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using MathNet.Numerics.LinearAlgebra;
+using EMBC.Drivers.Gdi.Materials;
 using EMBC.Engine.Render;
 using EMBC.Materials;
 using EMBC.Mathematics;
 using EMBC.Mathematics.Extensions;
 using EMBC.Utils;
-using MathNet.Spatial.Euclidean;
 
 namespace EMBC.Drivers.Gdi.Render
 {
     public class RenderHost :
         Engine.Render.RenderHost
     {
-
-        #region //storage
+        #region // storage
 
         private Graphics GraphicsHost { get; set; }
-        private Font FontConsloe12 { get; set; }
-        private BufferedGraphics BufferedGraphics { get; set; }
+
         private IntPtr GraphicsHostDeviceContext { get; set; }
-        public DirectBitmap BackBuffer { get; set; }
+
+        private BufferedGraphics BufferedGraphics { get; set; }
+
+        public DirectBitmap BackBuffer { get; private set; }
+
+        public ShaderLibrary ShaderLibrary { get; private set; }
+
+        private Font FontConsolas12 { get; set; }
 
         #endregion
 
-        #region //ctor
+        #region // ctor
 
         public RenderHost(IRenderHostSetup renderHostSetup) :
             base(renderHostSetup)
@@ -35,14 +41,16 @@ namespace EMBC.Drivers.Gdi.Render
             GraphicsHostDeviceContext = GraphicsHost.GetHdc();
             CreateSurface(HostInput.Size);
             CreateBuffers(BufferSize);
-
-            FontConsloe12 = new Font("Console", 12);
+            ShaderLibrary = new ShaderLibrary();
+            FontConsolas12 = new Font("Consolas", 12);
         }
 
         public override void Dispose()
         {
-            FontConsloe12.Dispose();
-            FontConsloe12 = default;
+            FontConsolas12.Dispose();
+            FontConsolas12 = default;
+
+            ShaderLibrary = default;
 
             DisposeBuffers();
             DisposeSurface();
@@ -57,7 +65,6 @@ namespace EMBC.Drivers.Gdi.Render
         }
 
         #endregion
-
 
         #region // routines
 
@@ -96,7 +103,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         private void DisposeSurface()
         {
-            BufferedGraphics.Dispose(); 
+            BufferedGraphics.Dispose();
             BufferedGraphics = default;
         }
 
@@ -106,69 +113,52 @@ namespace EMBC.Drivers.Gdi.Render
 
         protected override void RenderInternal(IEnumerable<IPrimitive> primitives)
         {
-            var graphics = BackBuffer.Graphics;
-            graphics.Clear(Color.Black);
+            BackBuffer.Clear(Color.Black);
 
-            DrawPrimitives(primitives);
+            RenderPrimitives(primitives);
 
-            graphics.DrawString(FpsCounter.FpsString, FontConsloe12, Brushes.Red, 0, 0);
+            BackBuffer.Graphics.DrawString(FpsCounter.FpsString, FontConsolas12, Brushes.Red, 0, 0);
 
-            BufferedGraphics.Graphics.DrawImage(BackBuffer.Bitmap, new RectangleF(PointF.Empty, HostSize), new RectangleF(new PointF(-0.5f, -0.5f), BufferSize), GraphicsUnit.Pixel);
+            BufferedGraphics.Graphics.DrawImage(
+                BackBuffer.Bitmap,
+                new RectangleF(PointF.Empty, HostSize),
+                new RectangleF(new PointF(-0.5f, -0.5f), BufferSize),
+                GraphicsUnit.Pixel);
             BufferedGraphics.Render(GraphicsHostDeviceContext);
         }
 
-        private void DrawPrimitives(IEnumerable<IPrimitive> primitives)
+        private void RenderPrimitives(IEnumerable<IPrimitive> primitives)
         {
+            // TODO: currently we know how to draw only certain type of primitives, so just filter them out
+            // TODO: in a future we're gonna solve this generically (without typecasting)
             foreach (var primitive in primitives.OfType<EMBC.Materials.Position.IPrimitive>())
             {
-                using (var pen = new Pen(primitive.Material.Color))
-                {
-                    switch (primitive.PrimitiveTopology)
-                    {
-                        case PrimitiveTopology.LineStrip:
-                            DrawPolyline(primitive.Vertices.Select(vertex => vertex.Position), primitive.PrimitiveBehaviour.Space, pen);
-                            break;
-                    }
-                }
+                var pipeline = Pipeline<EMBC.Materials.Position.Vertex, Materials.Position.VertexShader>.Instance;
+                pipeline.SetRenderHost(this);
+                ShaderLibrary.ShaderPosition.Update(GetMatrixForVertexShader(this, primitive.PrimitiveBehaviour.Space), primitive.Material.Color);
+                pipeline.SetShader(ShaderLibrary.ShaderPosition);
+                pipeline.Render(primitive.Vertices, primitive.PrimitiveTopology);
             }
         }
 
-
-        private void DrawPolyline(IEnumerable<Vector3F> points, Space space, Pen pen)
+        private static Matrix<double> GetMatrixForVertexShader(IRenderHost renderHost, Space space)
         {
             switch (space)
             {
                 case Space.World:
-                    DrawPolylineScreenSpace(CameraInfo.Cache.MatrixViewProjectionViewport.Transform(points), pen);
-                    break;
+                    return renderHost.CameraInfo.Cache.MatrixViewProjection;
 
                 case Space.View:
-                    DrawPolylineScreenSpace(CameraInfo.Cache.MatrixViewport.Transform(points), pen);
-                    break;
+                    return MatrixEx.Identity;
 
                 case Space.Screen:
-                    DrawPolylineScreenSpace(points, pen);
-                    break;
+                    return renderHost.CameraInfo.Cache.MatrixViewportInverse;
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(space), space, null);
-            }
-        }
-
-        private void DrawPolylineScreenSpace(IEnumerable<Vector3F> pointsScreen, Pen pen)
-        {
-            var form = default(Vector3F?);
-            foreach (var pointScreen in pointsScreen)
-            {
-                if (form.HasValue)
-                {
-                    BackBuffer.Graphics.DrawLine(pen, (float)form.Value.X, (float)form.Value.Y, (float)pointScreen.X, (float)pointScreen.Y);
-                }
-                form = pointScreen;
+                    throw new ArgumentOutOfRangeException(nameof(space), space, default);
             }
         }
 
         #endregion
-
     }
 }

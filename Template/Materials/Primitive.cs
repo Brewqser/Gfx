@@ -33,7 +33,7 @@ namespace EMBC.Materials
         #endregion
 
         #region // ctor
-
+        
         protected Primitive(PrimitiveBehaviour primitiveBehaviour, TMaterial material) :
             base(primitiveBehaviour)
         {
@@ -53,13 +53,13 @@ namespace EMBC.Materials
 
         public PrimitiveTopology PrimitiveTopology { get; }
 
-        public IReadOnlyList<TVertex> Vertices { get; }
+        public TVertex[] Vertices { get; }
 
         #endregion
 
         #region // ctor
 
-        protected Primitive(PrimitiveBehaviour primitiveBehaviour, TMaterial material, PrimitiveTopology primitiveTopology, IReadOnlyList<TVertex> vertices) :
+        protected Primitive(PrimitiveBehaviour primitiveBehaviour, TMaterial material, PrimitiveTopology primitiveTopology, TVertex[] vertices) :
             base(primitiveBehaviour, material)
         {
             PrimitiveTopology = primitiveTopology;
