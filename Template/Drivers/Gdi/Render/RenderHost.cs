@@ -134,7 +134,7 @@ namespace EMBC.Drivers.Gdi.Render
         }
 
 
-        private void DrawPolyline(IEnumerable<Point3D> points, Space space, Pen pen)
+        private void DrawPolyline(IEnumerable<Vector3F> points, Space space, Pen pen)
         {
             switch (space)
             {
@@ -155,9 +155,9 @@ namespace EMBC.Drivers.Gdi.Render
             }
         }
 
-        private void DrawPolylineScreenSpace(IEnumerable<Point3D> pointsScreen, Pen pen)
+        private void DrawPolylineScreenSpace(IEnumerable<Vector3F> pointsScreen, Pen pen)
         {
-            var form = default(Point3D?);
+            var form = default(Vector3F?);
             foreach (var pointScreen in pointsScreen)
             {
                 if (form.HasValue)

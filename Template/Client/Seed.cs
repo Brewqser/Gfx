@@ -11,28 +11,28 @@ namespace EMBC.Client
 {
     public static class Seed
     {
-        private static readonly Point3D[][] CubePolylines = new[]
+        private static readonly Vector3F[][] CubePolylines = new[]
         {
             new[]
             {
-                new Point3D(0, 0, 0),
-                new Point3D(1, 0, 0),
-                new Point3D(1, 1, 0),
-                new Point3D(0, 1, 0),
-                new Point3D(0, 0, 0),
+                new Vector3F(0, 0, 0),
+                new Vector3F(1, 0, 0),
+                new Vector3F(1, 1, 0),
+                new Vector3F(0, 1, 0),
+                new Vector3F(0, 0, 0),
             },
             new[]
             {
-                new Point3D(0, 0, 1),
-                new Point3D(1, 0, 1),
-                new Point3D(1, 1, 1),
-                new Point3D(0, 1, 1),
-                new Point3D(0, 0, 1),
+                new Vector3F(0, 0, 1),
+                new Vector3F(1, 0, 1),
+                new Vector3F(1, 1, 1),
+                new Vector3F(0, 1, 1),
+                new Vector3F(0, 0, 1),
             },
-            new[] { new Point3D(0, 0, 0), new Point3D(0, 0, 1), },
-            new[] { new Point3D(1, 0, 0), new Point3D(1, 0, 1), },
-            new[] { new Point3D(1, 1, 0), new Point3D(1, 1, 1), },
-            new[] { new Point3D(0, 1, 0), new Point3D(0, 1, 1), },
+            new[] { new Vector3F(0, 0, 0), new Vector3F(0, 0, 1), },
+            new[] { new Vector3F(1, 0, 0), new Vector3F(1, 0, 1), },
+            new[] { new Vector3F(1, 1, 0), new Vector3F(1, 1, 1), },
+            new[] { new Vector3F(0, 1, 0), new Vector3F(0, 1, 1), },
         }.Select(polyline => MatrixEx.Translate(-0.5, -0.5, -0.5).Transform(polyline).ToArray()).ToArray();
 
         private static double GetTimeSpanPeriodRatio(TimeSpan duration, TimeSpan periodDuration)
@@ -56,8 +56,8 @@ namespace EMBC.Client
                 PrimitiveTopology.LineStrip,
                 new Materials.Position.IVertex[]
                 {
-                    new Materials.Position.Vertex(new Point3D(3, 20, 0)),
-                    new Materials.Position.Vertex(new Point3D(140, 20, 0)),
+                    new Materials.Position.Vertex(new Vector3F(3, 20, 0)),
+                    new Materials.Position.Vertex(new Vector3F(140, 20, 0)),
                 },
                 Color.Gray
             );
@@ -68,8 +68,8 @@ namespace EMBC.Client
                 PrimitiveTopology.LineStrip,
                 new Materials.Position.IVertex[]
                 {
-                    new Materials.Position.Vertex(new Point3D(-0.9, -0.9, 0)),
-                    new Materials.Position.Vertex(new Point3D(0.9, -0.9, 0)),
+                    new Materials.Position.Vertex(new Vector3F(-0.9f, -0.9f, 0)),
+                    new Materials.Position.Vertex(new Vector3F(0.9f, -0.9f, 0)),
                 },
                 Color.Gray
             );
@@ -82,8 +82,8 @@ namespace EMBC.Client
                 PrimitiveTopology.LineStrip,
                 new Materials.Position.IVertex[]
                 {
-                    new Materials.Position.Vertex(new Point3D(0, 0, 0)),
-                    new Materials.Position.Vertex(new Point3D(1, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(1, 0, 0)),
                 },
                 Color.Red
             );
@@ -94,8 +94,8 @@ namespace EMBC.Client
                 PrimitiveTopology.LineStrip,
                 new Materials.Position.IVertex[]
                 {
-                    new Materials.Position.Vertex(new Point3D(0, 0, 0)),
-                    new Materials.Position.Vertex(new Point3D(0, 1, 0)),
+                    new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(0, 1, 0)),
                 },
                 Color.LawnGreen
             );
@@ -106,8 +106,8 @@ namespace EMBC.Client
                 PrimitiveTopology.LineStrip,
                 new Materials.Position.IVertex[]
                 {
-                    new Materials.Position.Vertex(new Point3D(0, 0, 0)),
-                    new Materials.Position.Vertex(new Point3D(0, 0, 1)),
+                    new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
+                    new Materials.Position.Vertex(new Vector3F(0, 0, 1)),
                 },
                 Color.Blue
             );

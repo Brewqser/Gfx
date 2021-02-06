@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using MathNet.Spatial.Euclidean;
+using EMBC.Mathematics;
 
 namespace EMBC.Materials.Position
 {
@@ -9,13 +9,13 @@ namespace EMBC.Materials.Position
     {
         #region // storage
 
-        public Point3D Position { get; }
+        public Vector3F Position { get; }
 
         #endregion
 
         #region // ctor
 
-        public Vertex(Point3D position)
+        public Vertex(Vector3F position)
         {
             Position = position;
         }

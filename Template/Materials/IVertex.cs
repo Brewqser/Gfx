@@ -1,4 +1,4 @@
-﻿using MathNet.Spatial.Euclidean;
+﻿using EMBC.Mathematics;
 
 namespace EMBC.Materials
 {
@@ -9,6 +9,6 @@ namespace EMBC.Materials
     public interface IVertexPosition :
         IVertex
     {
-        Point3D Position { get; }
+        Vector3F Position { get; }
     }
 }
