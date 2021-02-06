@@ -22,7 +22,7 @@ namespace EMBC.Drivers.Gdi.Render
         private Font FontConsloe12 { get; set; }
         private BufferedGraphics BufferedGraphics { get; set; }
         private IntPtr GraphicsHostDeviceContext { get; set; }
-        private DirectBitmap BackBuffer { get; set; }
+        public DirectBitmap BackBuffer { get; set; }
 
         #endregion
 
@@ -119,7 +119,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         private void DrawPrimitives(IEnumerable<IPrimitive> primitives)
         {
-            foreach (var primitive in primitives.OfType<Materials.Position.IPrimitive>())
+            foreach (var primitive in primitives.OfType<EMBC.Materials.Position.IPrimitive>())
             {
                 using (var pen = new Pen(primitive.Material.Color))
                 {

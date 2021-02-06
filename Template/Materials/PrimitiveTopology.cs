@@ -2,7 +2,11 @@
 {
     public enum PrimitiveTopology
     {
-        Undefined,
+        Undefined, 
+        PointList,
+        LineList,
         LineStrip,
+        TriangleList,
+        TriangleStrip,
     }
 }

@@ -73,6 +73,8 @@
     <Compile Include="Common\Camera\Projections\Projection.cs" />
     <Compile Include="Common\Camera\Projections\ProjectionOrthographic.cs" />
     <Compile Include="Common\Camera\Projections\ProjectionPerspective.cs" />
+    <Compile Include="Drivers\Gdi\Render\IPipeline.cs" />
+    <Compile Include="Drivers\Gdi\Render\Pipeline.cs" />
     <Compile Include="Drivers\Gdi\Render\RenderHost.cs" />
     <Compile Include="Common\Camera\Viewport.cs" />
     <Compile Include="Engine\Operators\IOperator.cs" />
@@ -109,7 +111,9 @@
     <Compile Include="Materials\IHaveVertices.cs" />
     <Compile Include="Materials\IMaterial.cs" />
     <Compile Include="Materials\IPrimitive.cs" />
+    <Compile Include="Drivers\Gdi\Materials\IShader.cs" />
     <Compile Include="Materials\IVertex.cs" />
+    <Compile Include="Drivers\Gdi\Materials\IVertexShader.cs" />
     <Compile Include="Materials\Material.cs" />
     <Compile Include="Materials\Position\IMaterial.cs" />
     <Compile Include="Materials\Position\IPrimitive.cs" />
@@ -120,6 +124,7 @@
     <Compile Include="Materials\Primitive.cs" />
     <Compile Include="Materials\PrimitiveBehaviour.cs" />
     <Compile Include="Materials\PrimitiveTopology.cs" />
+    <Compile Include="Drivers\Gdi\Materials\Shader.cs" />
     <Compile Include="Mathematics\Extensions\MatrixEx.cs" />
     <Compile Include="Mathematics\Extensions\Point2DEx.cs" />
     <Compile Include="Mathematics\Extensions\QuaternionEx.cs" />
