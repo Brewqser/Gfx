@@ -1,6 +1,5 @@
 ﻿using MathNet.Spatial.Euclidean;
 
-
 namespace EMBC.Mathematics.Extensions
 {
     public static class Point2DEx

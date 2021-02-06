@@ -73,7 +73,10 @@ namespace EMBC.Mathematics.Extensions
                 0, 0, 0, 1,
             }.ToMatrix();
 
-        public static Matrix<double> Identity => s_Identity.Clone();
+        public static Matrix<double> Identity
+        {
+            get => s_Identity.Clone();
+        }
 
         #endregion
 
@@ -111,10 +114,21 @@ namespace EMBC.Mathematics.Extensions
             return new Vector3D(x / w, y / w, z / w);
         }
 
+        public static Vector3F Transform(this Matrix<double> m, in Vector3F v)
+        {
+            MultiplyRowMajor(m, v.X, v.Y, v.Z, 1, out var x, out var y, out var z, out var w);
+            return new Vector3F((float)(x / w), (float)(y / w), (float)(z / w));
+        }
+
         public static Vector3D Transform(this Matrix<double> m, in UnitVector3D v)
         {
             MultiplyRowMajor(m, v.X, v.Y, v.Z, 1, out var x, out var y, out var z, out var w);
             return new Vector3D(x / w, y / w, z / w);
+        }
+
+        public static IEnumerable<Vector3F> Transform(this Matrix<double> matrix, IEnumerable<Vector3F> value)
+        {
+            return value.Select(v => matrix.Transform(v));
         }
 
         public static IEnumerable<Point3D> Transform(this Matrix<double> matrix, IEnumerable<Point3D> value)

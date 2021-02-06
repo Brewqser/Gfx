@@ -10,6 +10,30 @@ namespace EMBC.Utils
             return (T)cloneable.Clone();
         }
 
+        public static void Fill<T>(this T[] array, T value)
+        {
+            var length = array.Length;
+            if (length == 0) return;
+
+            var seed = Math.Min(32, array.Length);
+            for (var i = 0; i < seed; i++)
+            {
+                array[i] = value;
+            }
+
+            int count;
+            for (count = seed; count <= length / 2; count *= 2)
+            {
+                Array.Copy(array, 0, array, count, count);
+            }
+
+            var leftover = length - count;
+            if (leftover > 0)
+            {
+                Array.Copy(array, 0, array, count, leftover);
+            }
+        }
+
         public static void ForEach<T> (this IEnumerable<T> collection, Action<T> action)
         {
             foreach (var item in collection)
@@ -39,5 +63,9 @@ namespace EMBC.Utils
             return System.Windows.PresentationSource.FromVisual(window) as System.Windows.Interop.HwndSource;
         }
 
+        public static int ToRgba(this System.Drawing.Color color)
+        {
+            return ((((color.A << 8) + color.B) << 8) + color.G << 8) + color.R;
+        }
     }
 }
