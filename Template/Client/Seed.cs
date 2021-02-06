@@ -16,6 +16,7 @@ namespace EMBC.Client
 
         private static readonly Vector3F[][] CubePolylines = new[]
         {
+            // bottom
             new[]
             {
                 new Vector3F(0, 0, 0),
@@ -24,6 +25,7 @@ namespace EMBC.Client
                 new Vector3F(0, 1, 0),
                 new Vector3F(0, 0, 0),
             },
+            // top
             new[]
             {
                 new Vector3F(0, 0, 1),
@@ -32,11 +34,12 @@ namespace EMBC.Client
                 new Vector3F(0, 1, 1),
                 new Vector3F(0, 0, 1),
             },
+            // sides
             new[] { new Vector3F(0, 0, 0), new Vector3F(0, 0, 1), },
             new[] { new Vector3F(1, 0, 0), new Vector3F(1, 0, 1), },
             new[] { new Vector3F(1, 1, 0), new Vector3F(1, 1, 1), },
             new[] { new Vector3F(0, 1, 0), new Vector3F(0, 1, 1), },
-        }.Select(polyline => Matrix4DEx.Translate(-0.5, -0.5, -0.5).Transform(polyline).ToArray()).ToArray();
+        }.Select(polyline => Matrix4DEx.Translate(-0.5, -0.5, -0.5).Transform(polyline)).ToArray();
 
         private static readonly IPrimitive[] PointCloudBunny = new Func<IPrimitive[]>(() =>
         {
@@ -68,7 +71,11 @@ namespace EMBC.Client
 
         public static IEnumerable<IPrimitive> GetPrimitives()
         {
-            return GetPrimitivesAxisPoints().Concat(GetPrimitivesPointCloud());
+            return GetPrimitivesWorldAxis()
+                .Concat(GetPrimitivesScreenViewLines())
+                .Concat(GetPrimitivesCubes())
+                .Concat(GetPrimitivesPointCloud())
+                ;
         }
 
         private static IEnumerable<IPrimitive> GetPrimitivesScreenViewLines()
@@ -76,7 +83,7 @@ namespace EMBC.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.Screen),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(3, 20, 0)),
@@ -88,7 +95,7 @@ namespace EMBC.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.View),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(-0.9f, -0.9f, 0)),
@@ -103,7 +110,7 @@ namespace EMBC.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
@@ -115,7 +122,7 @@ namespace EMBC.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
@@ -127,7 +134,7 @@ namespace EMBC.Client
             yield return new Materials.Position.Primitive
             (
                 new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineStrip,
+                PrimitiveTopology.LineList,
                 new[]
                 {
                     new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
@@ -175,35 +182,6 @@ namespace EMBC.Client
                     Color.Yellow
                 );
             }
-        }
-
-        private static IEnumerable<IPrimitive> GetPrimitivesAxisPoints()
-        {
-            const int freq = 100;
-
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.PointList,
-                Enumerable.Range(0, freq).Select(i => new Materials.Position.Vertex(new Vector3F((float)i / freq, 0, 0))).ToArray(),
-                Color.Red
-            );
-
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.PointList,
-                Enumerable.Range(0, freq).Select(i => new Materials.Position.Vertex(new Vector3F(0, (float)i / freq, 0))).ToArray(),
-                Color.LawnGreen
-            );
-
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.PointList,
-                Enumerable.Range(0, freq).Select(i => new Materials.Position.Vertex(new Vector3F(0, 0, (float)i / freq))).ToArray(),
-                Color.Blue
-            );
         }
 
         private static IEnumerable<IPrimitive> GetPrimitivesPointCloud()
