@@ -5,6 +5,20 @@ namespace EMBC.Utils
 {
     public static class U
     {
+        public static int Clamp(this int value, int min, int max)
+        {
+            if (value < min)
+            {
+                value = min;
+                return value;
+            }
+            if (value > max)
+            {
+                value = max;
+            }
+            return value;
+        }
+
         public static T Cloned<T>(this T cloneable) where T : ICloneable
         {
             return (T)cloneable.Clone();
@@ -62,7 +76,12 @@ namespace EMBC.Utils
         {
             return System.Windows.PresentationSource.FromVisual(window) as System.Windows.Interop.HwndSource;
         }
-
+        public static void Swap<T>(ref T value0, ref T value1)
+        {
+            var temp = value0;
+            value0 = value1;
+            value1 = temp;
+        }
         public static int ToRgba(this System.Drawing.Color color)
         {
             return ((((color.A << 8) + color.B) << 8) + color.G << 8) + color.R;
