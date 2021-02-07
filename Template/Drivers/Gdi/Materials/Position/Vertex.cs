@@ -3,8 +3,8 @@ using EMBC.Mathematics;
 
 namespace EMBC.Drivers.Gdi.Materials.Position
 {
-    public readonly struct VertexShader :
-        IVertexShader<VertexShader>
+    public readonly struct Vertex :
+        IVertex<Vertex>
     {
         #region // storage
 
@@ -14,7 +14,7 @@ namespace EMBC.Drivers.Gdi.Materials.Position
 
         #region // ctor
 
-        public VertexShader(Vector4F position)
+        public Vertex(Vector4F position)
         {
             Position = position;
         }
@@ -23,9 +23,9 @@ namespace EMBC.Drivers.Gdi.Materials.Position
 
         #region // routines
 
-        public VertexShader CloneWithNewPosition(Vector4F position)
+        public Vertex CloneWithNewPosition(Vector4F position)
         {
-            return new VertexShader(position);
+            return new Vertex(position);
         }
 
         public override string ToString()

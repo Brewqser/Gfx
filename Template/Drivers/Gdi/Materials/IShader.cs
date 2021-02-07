@@ -2,12 +2,12 @@
 
 namespace EMBC.Drivers.Gdi.Materials
 {
-    public interface IShader<TVertex, TVertexShader>
-        where TVertex : struct
-        where TVertexShader : struct, IVertexShader
+    public interface IShader<TVertexIn, TVertex>
+        where TVertexIn : struct
+        where TVertex : struct, IVertex
     {
-        TVertexShader VertexShader(in TVertex vertex);
+        TVertex VertexShader(in TVertexIn vertex);
 
-        Vector4F? PixelShader(in TVertexShader vertex);
+        Vector4F? PixelShader(in TVertex vertex);
     }
 }

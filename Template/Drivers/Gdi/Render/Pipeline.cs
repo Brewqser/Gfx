@@ -7,14 +7,14 @@ using EMBC.Mathematics.Extensions;
 
 namespace EMBC.Drivers.Gdi.Render
 {
-    public class Pipeline<TVertex, TVertexShader> :
-        IPipeline<TVertex, TVertexShader>
-        where TVertex : struct
-        where TVertexShader : struct, IVertexShader<TVertexShader/* TODO: temporary */>
+    public class Pipeline<TVertexIn, TVertex> :
+        IPipeline<TVertexIn, TVertex>
+        where TVertexIn : struct
+        where TVertex : struct, IVertex<TVertex/* TODO: temporary */>
     {
         #region // singleton
 
-        public static IPipeline<TVertex, TVertexShader> Instance { get; } = new Pipeline<TVertex, TVertexShader>();
+        public static IPipeline<TVertexIn, TVertex> Instance { get; } = new Pipeline<TVertexIn, TVertex>();
 
         #endregion
 
@@ -22,7 +22,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         private RenderHost RenderHost { get; set; }
 
-        private IShader<TVertex, TVertexShader> Shader { get; set; }
+        private IShader<TVertexIn, TVertex> Shader { get; set; }
 
         #endregion
 
@@ -30,9 +30,9 @@ namespace EMBC.Drivers.Gdi.Render
 
         public void SetRenderHost(RenderHost renderHost) => RenderHost = renderHost;
 
-        public void SetShader(IShader<TVertex, TVertexShader> shader) => Shader = shader;
+        public void SetShader(IShader<TVertexIn, TVertex> shader) => Shader = shader;
 
-        public void Render(TVertex[] vertices, PrimitiveTopology primitiveTopology)
+        public void Render(TVertexIn[] vertices, PrimitiveTopology primitiveTopology)
         {
             StageVertexShader(vertices, primitiveTopology);
         }
@@ -41,7 +41,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region // routines
 
-        private void TransformClipToScreen(ref TVertexShader vertex)
+        private void TransformClipToScreen(ref TVertex vertex)
         {
             var positionScreen = RenderHost.CameraInfo.Cache.MatrixViewport
                 .Transform(vertex.Position)
@@ -55,9 +55,9 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region // stages
 
-        private void StageVertexShader(TVertex[] vertices, PrimitiveTopology primitiveTopology)
+        private void StageVertexShader(TVertexIn[] vertices, PrimitiveTopology primitiveTopology)
         {
-            var verticesVsOut = new TVertexShader[vertices.Length];
+            var verticesVsOut = new TVertex[vertices.Length];
             for (var i = 0; i < vertices.Length; i++)
             {
                 verticesVsOut[i] = Shader.VertexShader(vertices[i]);
@@ -66,7 +66,7 @@ namespace EMBC.Drivers.Gdi.Render
             StagePrimitiveAssembly(verticesVsOut, primitiveTopology);
         }
 
-        private void StagePrimitiveAssembly(TVertexShader[] vertices, PrimitiveTopology primitiveTopology)
+        private void StagePrimitiveAssembly(TVertex[] vertices, PrimitiveTopology primitiveTopology)
         {
             switch (primitiveTopology)
             {
@@ -106,7 +106,7 @@ namespace EMBC.Drivers.Gdi.Render
             }
         }
 
-        private void StagePixelShader(int x, int y, ref TVertexShader vertex)
+        private void StagePixelShader(int x, int y, ref TVertex vertex)
         {
             var color = Shader.PixelShader(vertex);
 
@@ -137,14 +137,14 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region // point
 
-        private void RasterizePoint(ref TVertexShader vertex0)
+        private void RasterizePoint(ref TVertex vertex0)
         {
             // TODO: clipping
             TransformClipToScreen(ref vertex0);
             DrawPoint(ref vertex0);
         }
 
-        private void DrawPoint(ref TVertexShader vertex0)
+        private void DrawPoint(ref TVertex vertex0)
         {
             var x = (int)vertex0.Position.X;
             var y = (int)vertex0.Position.Y;
@@ -155,7 +155,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region // line
 
-        private void RasterizeLine(ref TVertexShader vertex0, ref TVertexShader vertex1)
+        private void RasterizeLine(ref TVertex vertex0, ref TVertex vertex1)
         {
             // TODO: clipping
             TransformClipToScreen(ref vertex0);
@@ -163,14 +163,15 @@ namespace EMBC.Drivers.Gdi.Render
             DrawLine(ref vertex0, ref vertex1);
         }
 
-        private void DrawLine(ref TVertexShader vertex0, ref TVertexShader vertex1)
+        private void DrawLine(ref TVertex vertex0, ref TVertex vertex1)
         {
             var x0 = (int)vertex0.Position.X;
             var y0 = (int)vertex0.Position.Y;
             var x1 = (int)vertex1.Position.X;
             var y1 = (int)vertex1.Position.Y;
 
-            var empty = default(TVertexShader);
+            // TODO: vertex interpolation
+            var empty = default(TVertex);
 
             var pixels = BresenhamLine(x0, y0, x1, y1);
 
@@ -180,7 +181,6 @@ namespace EMBC.Drivers.Gdi.Render
             }
         }
 
-        /// Bresenham's line algorithm line rasterization algorithm.
         /// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
         public static IEnumerable<(int X, int Y)> BresenhamLine(int x0, int y0, int x1, int y1)
         {

@@ -2,16 +2,16 @@
 
 namespace EMBC.Drivers.Gdi.Materials
 {
-    public abstract class Shader<TVertex, TVertexShader> :
-        IShader<TVertex, TVertexShader>
-        where TVertex : struct
-        where TVertexShader : struct, IVertexShader
+    public abstract class Shader<TVertexIn, TVertex> :
+       IShader<TVertexIn, TVertex>
+       where TVertexIn : struct
+       where TVertex : struct, IVertex
     {
         #region // shaders
 
-        public abstract TVertexShader VertexShader(in TVertex vertex);
+        public abstract TVertex VertexShader(in TVertexIn vertex);
 
-        public virtual Vector4F? PixelShader(in TVertexShader vertex)
+        public virtual Vector4F? PixelShader(in TVertex vertex)
         {
             return new Vector4F(1, 1, 1, 1);
         }

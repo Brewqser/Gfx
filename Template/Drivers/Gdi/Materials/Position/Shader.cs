@@ -1,12 +1,10 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using EMBC.Materials.Position;
-using EMBC.Mathematics;
+﻿using EMBC.Mathematics;
 using EMBC.Mathematics.Extensions;
 
 namespace EMBC.Drivers.Gdi.Materials.Position
 {
     public class Shader :
-        Shader<Vertex, VertexShader>
+        Shader<EMBC.Materials.Position.Vertex, Vertex>
     {
         #region // storage
 
@@ -18,7 +16,7 @@ namespace EMBC.Drivers.Gdi.Materials.Position
 
         #region // routines
 
-        public void Update(Matrix4D matrixWorldViewProjection, System.Drawing.Color color)
+        public void Update(in Matrix4D matrixWorldViewProjection, System.Drawing.Color color)
         {
             MatrixWorldViewProjection = matrixWorldViewProjection;
             Color = color.ToVector4F();
@@ -28,15 +26,16 @@ namespace EMBC.Drivers.Gdi.Materials.Position
 
         #region // shaders
 
-        public override VertexShader VertexShader(in Vertex vertex)
+        public override Vertex VertexShader(in EMBC.Materials.Position.Vertex vertex)
         {
-            return new VertexShader
+            return new Vertex
             (
                 MatrixWorldViewProjection.Transform(vertex.Position.ToVector4F(1))
             );
         }
 
-        public override Vector4F? PixelShader(in VertexShader vertex)
+        /// <inheritdoc />
+        public override Vector4F? PixelShader(in Vertex vertex)
         {
             return Color.W > 0 ? Color : default;
         }

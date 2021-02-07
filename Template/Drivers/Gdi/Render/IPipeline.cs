@@ -1,5 +1,6 @@
 ﻿using EMBC.Materials;
 using EMBC.Drivers.Gdi.Materials;
+using EMBC.Drivers.Gdi.Materials.Position;
 
 namespace EMBC.Drivers.Gdi.Render
 {
@@ -8,18 +9,18 @@ namespace EMBC.Drivers.Gdi.Render
         void SetRenderHost(RenderHost renderHost);
     }
 
-    public interface IPipeline<in TVertex> :
+    public interface IPipeline<in TVertexIn> :
         IPipeline
-        where TVertex : struct
+        where TVertexIn : struct
     {
-        void Render(TVertex[] vertices, PrimitiveTopology primitiveTopology);
+        void Render(TVertexIn[] vertices, PrimitiveTopology primitiveTopology);
     }
 
-    public interface IPipeline<TVertex, TVertexShader> :
-        IPipeline<TVertex>
-        where TVertex : struct
-        where TVertexShader : struct, IVertexShader
+    public interface IPipeline<TVertexIn, TVertex> :
+        IPipeline<TVertexIn>
+        where TVertexIn : struct
+        where TVertex : struct, Materials.IVertex
     {
-        void SetShader(IShader<TVertex, TVertexShader> shader);
+        void SetShader(IShader<TVertexIn, TVertex> shader);
     }
 }

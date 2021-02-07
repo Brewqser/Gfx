@@ -74,7 +74,7 @@
     <Compile Include="Common\Camera\Projections\ProjectionOrthographic.cs" />
     <Compile Include="Common\Camera\Projections\ProjectionPerspective.cs" />
     <Compile Include="Drivers\Gdi\Materials\Position\Shader.cs" />
-    <Compile Include="Drivers\Gdi\Materials\Position\VertexShader.cs" />
+    <Compile Include="Drivers\Gdi\Materials\Position\Vertex.cs" />
     <Compile Include="Drivers\Gdi\Materials\ShaderLibrary.cs" />
     <Compile Include="Drivers\Gdi\Render\IPipeline.cs" />
     <Compile Include="Drivers\Gdi\Render\Pipeline.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="Materials\IPrimitive.cs" />
     <Compile Include="Drivers\Gdi\Materials\IShader.cs" />
     <Compile Include="Materials\IVertex.cs" />
-    <Compile Include="Drivers\Gdi\Materials\IVertexShader.cs" />
+    <Compile Include="Drivers\Gdi\Materials\IVertex.cs" />
     <Compile Include="Materials\Material.cs" />
     <Compile Include="Materials\Position\IMaterial.cs" />
     <Compile Include="Materials\Position\IPrimitive.cs" />

@@ -133,8 +133,7 @@ namespace EMBC.Drivers.Gdi.Render
             // TODO: in a future we're gonna solve this generically (without typecasting)
             foreach (var primitive in primitives.OfType<EMBC.Materials.Position.IPrimitive>())
             {
-                var pipeline = Pipeline<EMBC.Materials.Position.Vertex, Materials.Position.VertexShader>.Instance;
-                pipeline.SetRenderHost(this);
+                var pipeline = Pipeline<EMBC.Materials.Position.Vertex, Materials.Position.Vertex>.Instance; pipeline.SetRenderHost(this);
                 ShaderLibrary.ShaderPosition.Update(GetMatrixForVertexShader(this, primitive.PrimitiveBehaviour.Space), primitive.Material.Color);
                 pipeline.SetShader(ShaderLibrary.ShaderPosition);
                 pipeline.Render(primitive.Vertices, primitive.PrimitiveTopology);
