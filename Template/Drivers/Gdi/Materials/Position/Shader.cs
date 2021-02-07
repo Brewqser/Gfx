@@ -8,7 +8,7 @@ namespace EMBC.Drivers.Gdi.Materials.Position
     {
         #region // storage
 
-        private Matrix4D MatrixWorldViewProjection { get; set; } = Matrix4D.Identity;
+        private Matrix4D MatrixToClip { get; set; } = Matrix4D.Identity;
 
         private Vector4F Color { get; set; } = new Vector4F(0, 0, 0, 0);
 
@@ -16,9 +16,9 @@ namespace EMBC.Drivers.Gdi.Materials.Position
 
         #region // routines
 
-        public void Update(in Matrix4D matrixWorldViewProjection, System.Drawing.Color color)
+        public void Update(in Matrix4D matrixToClip, System.Drawing.Color color)
         {
-            MatrixWorldViewProjection = matrixWorldViewProjection;
+            MatrixToClip = matrixToClip;
             Color = color.ToVector4F();
         }
 
@@ -30,7 +30,7 @@ namespace EMBC.Drivers.Gdi.Materials.Position
         {
             return new Vertex
             (
-                MatrixWorldViewProjection.Transform(vertex.Position.ToVector4F(1))
+                MatrixToClip.Transform(vertex.Position.ToVector4F(1))
             );
         }
 
