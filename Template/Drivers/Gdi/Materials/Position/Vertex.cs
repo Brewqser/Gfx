@@ -4,7 +4,7 @@ using EMBC.Mathematics;
 namespace EMBC.Drivers.Gdi.Materials.Position
 {
     public readonly struct Vertex :
-        IVertex<Vertex>
+        IVertex
     {
         #region // storage
 
@@ -22,11 +22,6 @@ namespace EMBC.Drivers.Gdi.Materials.Position
         #endregion
 
         #region // routines
-
-        public Vertex CloneWithNewPosition(Vector4F position)
-        {
-            return new Vertex(position);
-        }
 
         public override string ToString()
         {

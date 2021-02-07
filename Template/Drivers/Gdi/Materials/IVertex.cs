@@ -5,11 +5,4 @@ namespace EMBC.Drivers.Gdi.Materials
     {
         Vector4F Position { get; }
     }
-
-    public interface IVertex<out TVertex> :
-        IVertex
-        where TVertex : struct, IVertex
-    {
-        TVertex CloneWithNewPosition(Vector4F position);
-    }
 }
