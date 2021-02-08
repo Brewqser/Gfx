@@ -34,7 +34,7 @@ namespace EMBC.Client
             while (!Dispatcher.HasShutdownStarted)
             {
 
-                Render(RenderHosts, Seed.GetPrimitives());
+                Render(RenderHosts, Seed.GetModels());
                 System.Windows.Forms.Application.DoEvents();
             }
         }
@@ -50,9 +50,9 @@ namespace EMBC.Client
 
         #region //routines
 
-        private static void Render(IEnumerable<IRenderHost> renderHosts, IEnumerable<IPrimitive> primitives)
+        private static void Render(IEnumerable<IRenderHost> renderHosts, IEnumerable<IModel> models)
         {
-            renderHosts.ForEach(rh => rh.Render(primitives));
+            renderHosts.ForEach(rh => rh.Render(models));
             
         }
 

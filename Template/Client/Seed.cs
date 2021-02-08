@@ -7,6 +7,7 @@ using MathNet.Spatial.Euclidean;
 using EMBC.Materials;
 using EMBC.Mathematics;
 using EMBC.Mathematics.Extensions;
+using EMBC.Utils;
 
 namespace EMBC.Client
 {
@@ -16,7 +17,6 @@ namespace EMBC.Client
 
         private static readonly Vector3F[][] CubePolylines = new[]
         {
-            // bottom
             new[]
             {
                 new Vector3F(0, 0, 0),
@@ -25,7 +25,6 @@ namespace EMBC.Client
                 new Vector3F(0, 1, 0),
                 new Vector3F(0, 0, 0),
             },
-            // top
             new[]
             {
                 new Vector3F(0, 0, 1),
@@ -34,31 +33,31 @@ namespace EMBC.Client
                 new Vector3F(0, 1, 1),
                 new Vector3F(0, 0, 1),
             },
-            // sides
             new[] { new Vector3F(0, 0, 0), new Vector3F(0, 0, 1), },
             new[] { new Vector3F(1, 0, 0), new Vector3F(1, 0, 1), },
             new[] { new Vector3F(1, 1, 0), new Vector3F(1, 1, 1), },
             new[] { new Vector3F(0, 1, 0), new Vector3F(0, 1, 1), },
         }.Select(polyline => Matrix4DEx.Translate(-0.5, -0.5, -0.5).Transform(polyline)).ToArray();
 
-        private static readonly IPrimitive[] PointCloudBunny = new Func<IPrimitive[]>(() =>
+        private static readonly IModel[] PointCloudBunny = new Func<IModel[]>(() =>
         {
             var matrix = Matrix4DEx.Scale(10) * Matrix4DEx.Rotate(QuaternionEx.AroundAxis(UnitVector3D.XAxis, Math.PI * 0.5)) * Matrix4DEx.Translate(-1, -1, -0.5);
 
             // point cloud source: http://graphics.stanford.edu/data/3Dscanrep/
             var vertices = StreamPointCloud_XYZ(@"..\..\..\resources\bunny.xyz")
-                .Select(vertex => new Materials.Position.Vertex(matrix.Transform(vertex)))
+                .Select(vertex => matrix.Transform(vertex))
                 .ToArray();
 
-            return new IPrimitive[]
+            return new IModel[]
             {
-                new Materials.Position.Primitive
-                (
-                    new PrimitiveBehaviour(Space.World),
-                    PrimitiveTopology.PointList,
-                    vertices,
-                    Color.White
-                )
+                new Model
+                {
+                    ShaderType = ShaderType.Position,
+                    Space = Space.World,
+                    PrimitiveTopology = PrimitiveTopology.PointList,
+                    Positions = vertices,
+                    Color = Color.White.ToRgba(),
+                }
             };
         })();
 
@@ -69,84 +68,89 @@ namespace EMBC.Client
             return duration.TotalMilliseconds % periodDuration.TotalMilliseconds / periodDuration.TotalMilliseconds;
         }
 
-        public static IEnumerable<IPrimitive> GetPrimitives()
+        public static IEnumerable<IModel> GetModels()
         {
-            return new IPrimitive[0]
-                .Concat(GetPrimitivesTriangles())
-                .Concat(GetPrimitivesWorldAxis())
-                .Concat(GetPrimitivesScreenViewLines())
-                .Concat(GetPrimitivesCubes())
-                .Concat(GetPrimitivesPointCloud())
+            return new IModel[0]
+                .Concat(GetWorldAxis())
+                .Concat(GetScreenViewLines())
+                .Concat(GetTriangles())
+                .Concat(GetCubes())
+                .Concat(GetPointCloud())
                 ;
         }
 
-        private static IEnumerable<IPrimitive> GetPrimitivesScreenViewLines()
+        private static IEnumerable<IModel> GetScreenViewLines()
         {
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.Screen),
-                PrimitiveTopology.LineList,
-                new[]
+            yield return new Model
+            {
+                ShaderType = ShaderType.Position,
+                Space = Space.Screen,
+                PrimitiveTopology = PrimitiveTopology.LineList,
+                Positions = new[]
                 {
-                    new Materials.Position.Vertex(new Vector3F(3, 20, 0)),
-                    new Materials.Position.Vertex(new Vector3F(140, 20, 0)),
+                    new Vector3F(3, 20, 0),
+                    new Vector3F(140, 20, 0),
                 },
-                Color.Gray
-            );
+                Color = Color.Gray.ToRgba(),
+            };
 
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.View),
-                PrimitiveTopology.LineList,
-                new[]
+            yield return new Model
+            {
+                ShaderType = ShaderType.Position,
+                Space = Space.View,
+                PrimitiveTopology = PrimitiveTopology.LineList,
+                Positions = new[]
                 {
-                    new Materials.Position.Vertex(new Vector3F(-0.9f, -0.9f, 0)),
-                    new Materials.Position.Vertex(new Vector3F(0.9f, -0.9f, 0)),
+                    new Vector3F(-0.9f, -0.9f, 0),
+                    new Vector3F(0.9f, -0.9f, 0),
                 },
-                Color.Gray
-            );
+                Color = Color.Gray.ToRgba(),
+            };
         }
 
-        private static IEnumerable<IPrimitive> GetPrimitivesWorldAxis()
+        private static IEnumerable<IModel> GetWorldAxis()
         {
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineList,
-                new[]
+            yield return new Model
+            {
+                ShaderType = ShaderType.Position,
+                Space = Space.World,
+                PrimitiveTopology = PrimitiveTopology.LineList,
+                Positions = new[]
                 {
-                    new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
-                    new Materials.Position.Vertex(new Vector3F(1, 0, 0)),
+                    new Vector3F(0, 0, 0),
+                    new Vector3F(1, 0, 0),
                 },
-                Color.Red
-            );
+                Color = Color.Red.ToRgba(),
+            };
 
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineList,
-                new[]
+            yield return new Model
+            {
+                ShaderType = ShaderType.Position,
+                Space = Space.World,
+                PrimitiveTopology = PrimitiveTopology.LineList,
+                Positions = new[]
                 {
-                    new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
-                    new Materials.Position.Vertex(new Vector3F(0, 1, 0)),
+                    new Vector3F(0, 0, 0),
+                    new Vector3F(0, 1, 0),
                 },
-                Color.LawnGreen
-            );
+                Color = Color.LawnGreen.ToRgba(),
+            };
 
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.LineList,
-                new[]
+            yield return new Model
+            {
+                ShaderType = ShaderType.Position,
+                Space = Space.World,
+                PrimitiveTopology = PrimitiveTopology.LineList,
+                Positions = new[]
                 {
-                    new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
-                    new Materials.Position.Vertex(new Vector3F(0, 0, 1)),
+                    new Vector3F(0, 0, 0),
+                    new Vector3F(0, 0, 1),
                 },
-                Color.Blue
-            );
+                Color = Color.Blue.ToRgba(),
+            };
         }
 
-        private static IEnumerable<IPrimitive> GetPrimitivesCubes()
+        private static IEnumerable<IModel> GetCubes()
         {
             var duration = new TimeSpan(DateTime.UtcNow.Ticks);
 
@@ -158,13 +162,14 @@ namespace EMBC.Client
 
             foreach (var cubePolyline in CubePolylines)
             {
-                yield return new Materials.Position.Primitive
-                (
-                    new PrimitiveBehaviour(Space.World),
-                    PrimitiveTopology.LineStrip,
-                    matrixModel.Transform(cubePolyline).Select(position => new Materials.Position.Vertex(position)).ToArray(),
-                    Color.White
-                );
+                yield return new Model
+                {
+                    ShaderType = ShaderType.Position,
+                    Space = Space.World,
+                    PrimitiveTopology = PrimitiveTopology.LineStrip,
+                    Positions = matrixModel.Transform(cubePolyline),
+                    Color = Color.White.ToRgba(),
+                };
             }
 
             angle = GetTimeSpanPeriodRatio(duration, new TimeSpan(0, 0, 0, 1)) * Math.PI * 2;
@@ -176,52 +181,55 @@ namespace EMBC.Client
 
             foreach (var cubePolyline in CubePolylines)
             {
-                yield return new Materials.Position.Primitive
-                (
-                    new PrimitiveBehaviour(Space.World),
-                    PrimitiveTopology.LineStrip,
-                    matrixModel.Transform(cubePolyline).Select(position => new Materials.Position.Vertex(position)).ToArray(),
-                    Color.Yellow
-                );
+                yield return new Model
+                {
+                    ShaderType = ShaderType.Position,
+                    Space = Space.World,
+                    PrimitiveTopology = PrimitiveTopology.LineStrip,
+                    Positions = matrixModel.Transform(cubePolyline),
+                    Color = Color.Yellow.ToRgba(),
+                };
             }
         }
 
-        private static IEnumerable<IPrimitive> GetPrimitivesPointCloud()
+        private static IEnumerable<IModel> GetPointCloud()
         {
             return PointCloudBunny;
         }
 
-        private static IEnumerable<IPrimitive> GetPrimitivesTriangles()
+        private static IEnumerable<IModel> GetTriangles()
         {
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.TriangleStrip,
-                new[]
+            yield return new Model
+            {
+                ShaderType = ShaderType.Position,
+                Space = Space.World,
+                PrimitiveTopology = PrimitiveTopology.TriangleStrip,
+                Positions = new[]
                 {
-                    new Materials.Position.Vertex(new Vector3F(0, 0, 0)),
-                    new Materials.Position.Vertex(new Vector3F(1, 0, 0)),
-                    new Materials.Position.Vertex(new Vector3F(0, 1, 0)),
-                    new Materials.Position.Vertex(new Vector3F(1, 1, 0)),
+                    new Vector3F(0, -1, 0),
+                    new Vector3F(1, -1, 0),
+                    new Vector3F(0, -2, 0),
+                    new Vector3F(1, -2, 0),
                 },
-                Color.Goldenrod
-            );
+                Color = Color.Goldenrod.ToRgba(),
+            };
 
-            yield return new Materials.Position.Primitive
-            (
-                new PrimitiveBehaviour(Space.World),
-                PrimitiveTopology.TriangleList,
-                new[]
+            yield return new Model
+            {
+                ShaderType = ShaderType.Position,
+                Space = Space.World,
+                PrimitiveTopology = PrimitiveTopology.TriangleList,
+                Positions = new[]
                 {
-                    new Materials.Position.Vertex(new Vector3F(-2, 0, 0)),
-                    new Materials.Position.Vertex(new Vector3F(-2, 1, 0)),
-                    new Materials.Position.Vertex(new Vector3F(-1, 0, 0)),
-                    new Materials.Position.Vertex(new Vector3F(-4, 0, 0)),
-                    new Materials.Position.Vertex(new Vector3F(-4, 1, 0)),
-                    new Materials.Position.Vertex(new Vector3F(-3, 0, 0)),
+                    new Vector3F(-2, 0, 0),
+                    new Vector3F(-2, 1, 0),
+                    new Vector3F(-1, 0, 0),
+                    new Vector3F(-4, 0, 0),
+                    new Vector3F(-4, 1, 0),
+                    new Vector3F(-3, 0, 0),
                 },
-                Color.Cyan
-            );
+                Color = Color.Cyan.ToRgba(),
+            };
         }
 
         public static IEnumerable<Vector3F> StreamPointCloud_XYZ(string filePath)

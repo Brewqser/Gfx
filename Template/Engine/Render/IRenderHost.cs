@@ -19,7 +19,7 @@ namespace EMBC.Engine.Render
 
         FpsCounter FpsCounter { get; }
 
-        void Render(IEnumerable<IPrimitive> primitives);
+        void Render(IEnumerable<IModel> models);
 
         event EventHandler<ICameraInfo> CameraInfoChanged;
 

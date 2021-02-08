@@ -125,16 +125,16 @@ namespace EMBC.Engine.Render
 
         #region //render
 
-        public void Render(IEnumerable<IPrimitive> primitives)
+        public void Render(IEnumerable<IModel> models)
         {
             EnsureBufferSize();
             FrameStarted = DateTime.UtcNow;
             FpsCounter.StartFrame();
-            RenderInternal(primitives);
+            RenderInternal(models);
             FpsCounter.StopFrame();
         }
 
-        protected abstract void RenderInternal(IEnumerable<IPrimitive> primitives);
+        protected abstract void RenderInternal(IEnumerable<IModel> models);
 
         #endregion
 

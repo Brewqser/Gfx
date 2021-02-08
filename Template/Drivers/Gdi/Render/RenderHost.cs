@@ -111,11 +111,11 @@ namespace EMBC.Drivers.Gdi.Render
 
         #region // render
 
-        protected override void RenderInternal(IEnumerable<IPrimitive> primitives)
+        protected override void RenderInternal(IEnumerable<IModel> models)
         {
             BackBuffer.Clear(Color.Black);
 
-            RenderPrimitives(primitives);
+            RenderModels(models);
 
             BackBuffer.Graphics.DrawString(FpsCounter.FpsString, FontConsolas12, Brushes.Red, 0, 0);
 
@@ -127,22 +127,14 @@ namespace EMBC.Drivers.Gdi.Render
             BufferedGraphics.Render(GraphicsHostDeviceContext);
         }
 
-        private void RenderPrimitives(IEnumerable<IPrimitive> primitives)
+        private void RenderModels(IEnumerable<IModel> models)
         {
-            // TODO: currently we know how to draw only certain type of primitives, so just filter them out
-            // TODO: in a future we're gonna solve this generically (without typecasting)
-            foreach (var primitive in primitives.OfType<EMBC.Materials.Position.IPrimitive>())
+            foreach (var model in models)
             {
-                var gfxModel = GfxModel.Factory(this, new Model
+                using (var gfxModel = GfxModel.Factory(this, model))
                 {
-                    ShaderType = ShaderType.Position,
-                    Space = primitive.PrimitiveBehaviour.Space,
-                    PrimitiveTopology = primitive.PrimitiveTopology,
-                    Positions = primitive.Vertices.Select(v => v.Position).ToArray(),
-                    Color = primitive.Material.Color.ToRgba(),
-                });
-                ShaderLibrary.ShaderPosition.Update(GetMatrixForVertexShader(this, primitive.PrimitiveBehaviour.Space), primitive.Material.Color.ToRgba());
-                gfxModel.Render(GetMatrixForVertexShader(this, primitive.PrimitiveBehaviour.Space));
+                    gfxModel.Render(GetMatrixForVertexShader(this, model.Space));
+                }
             }
         }
 
