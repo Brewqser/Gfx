@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using MathNet.Numerics.LinearAlgebra;
 using EMBC.Drivers.Gdi.Materials;
 using EMBC.Engine.Render;
 using EMBC.Materials;
@@ -41,7 +40,7 @@ namespace EMBC.Drivers.Gdi.Render
             GraphicsHostDeviceContext = GraphicsHost.GetHdc();
             CreateSurface(HostInput.Size);
             CreateBuffers(BufferSize);
-            ShaderLibrary = new ShaderLibrary();
+            ShaderLibrary = new ShaderLibrary(this);
             FontConsolas12 = new Font("Consolas", 12);
         }
 
@@ -50,6 +49,7 @@ namespace EMBC.Drivers.Gdi.Render
             FontConsolas12.Dispose();
             FontConsolas12 = default;
 
+            ShaderLibrary.Dispose();
             ShaderLibrary = default;
 
             DisposeBuffers();
@@ -133,10 +133,16 @@ namespace EMBC.Drivers.Gdi.Render
             // TODO: in a future we're gonna solve this generically (without typecasting)
             foreach (var primitive in primitives.OfType<EMBC.Materials.Position.IPrimitive>())
             {
-                var pipeline = Pipeline<EMBC.Materials.Position.Vertex, Materials.Position.Vertex>.Instance; pipeline.SetRenderHost(this);
-                ShaderLibrary.ShaderPosition.Update(GetMatrixForVertexShader(this, primitive.PrimitiveBehaviour.Space), primitive.Material.Color);
-                pipeline.SetShader(ShaderLibrary.ShaderPosition);
-                pipeline.Render(primitive.Vertices, primitive.PrimitiveTopology);
+                var gfxModel = GfxModel.Factory(this, new Model
+                {
+                    ShaderType = ShaderType.Position,
+                    Space = primitive.PrimitiveBehaviour.Space,
+                    PrimitiveTopology = primitive.PrimitiveTopology,
+                    Positions = primitive.Vertices.Select(v => v.Position).ToArray(),
+                    Color = primitive.Material.Color.ToRgba(),
+                });
+                ShaderLibrary.ShaderPosition.Update(GetMatrixForVertexShader(this, primitive.PrimitiveBehaviour.Space), primitive.Material.Color.ToRgba());
+                gfxModel.Render(GetMatrixForVertexShader(this, primitive.PrimitiveBehaviour.Space));
             }
         }
 

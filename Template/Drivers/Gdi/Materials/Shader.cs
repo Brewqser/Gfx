@@ -1,21 +1,37 @@
-﻿using EMBC.Mathematics;
+﻿using EMBC.Drivers.Gdi.Render;
+using EMBC.Drivers.Gdi.Render.Rasterization;
+using EMBC.Mathematics;
 
 namespace EMBC.Drivers.Gdi.Materials
 {
-    public abstract class Shader<TVertexIn, TVertex> :
-       IShader<TVertexIn, TVertex>
-       where TVertexIn : struct
-       where TVertex : struct, IVertex
+    public abstract class Shader<TVsIn, TPsIn> :
+        IShader<TVsIn, TPsIn>
+        where TVsIn : unmanaged
+        where TPsIn : unmanaged, IPsIn<TPsIn>
     {
-        #region // shaders
+        public RenderHost RenderHost { get; private set; }
 
-        public abstract TVertex VertexShader(in TVertexIn vertex);
+        public IPipeline<TVsIn, TPsIn> Pipeline { get; private set; }
 
-        public virtual Vector4F? PixelShader(in TVertex vertex)
+        #region // ctor
+
+        protected Shader(RenderHost renderHost)
         {
-            return new Vector4F(1, 1, 1, 1);
+            RenderHost = renderHost;
+            Pipeline = new Pipeline<TVsIn, TPsIn>(this);
+        }
+
+        public virtual void Dispose()
+        {
+            Pipeline.Dispose();
+            Pipeline = default;
+
+            RenderHost = default;
         }
 
         #endregion
+
+        public abstract bool VertexShader(in TVsIn vsin, out TPsIn vsout);
+        public abstract bool PixelShader(in TPsIn psin, out Vector4F color);
     }
 }

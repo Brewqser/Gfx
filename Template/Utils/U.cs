@@ -86,5 +86,16 @@ namespace EMBC.Utils
         {
             return ((((color.A << 8) + color.B) << 8) + color.G << 8) + color.R;
         }
+
+        public static System.Drawing.Color FromRgbaToColor(this int color)
+        {
+            return System.Drawing.Color.FromArgb
+            (
+                (color >> 24) & 0xFF,
+                (color >> 0) & 0xFF,
+                (color >> 8) & 0xFF,
+                (color >> 16) & 0xFF
+            );
+        }
     }
 }

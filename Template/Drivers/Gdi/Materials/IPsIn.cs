@@ -1,8 +1,10 @@
 ﻿using EMBC.Mathematics;
 namespace EMBC.Drivers.Gdi.Materials
 {
-    public interface IVertex
+    public interface IPsIn<TPsIn> :
+        IInterpolate<TPsIn>
     {
         Vector4F Position { get; }
+        TPsIn ReplacePosition(Vector4F position);
     }
 }
