@@ -1,17 +1,12 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 
 namespace EMBC.Utils
 {
     public class DirectBitmap :
-        Buffer2D<int>,
-        IDisposable
+        Buffer2D<int>
     {
         #region // storage
-
-        private GCHandle BufferHandle { get; set; }
 
         public Bitmap Bitmap { get; private set; }
 
@@ -21,12 +16,16 @@ namespace EMBC.Utils
 
         #region // ctor
 
-        public DirectBitmap(Size size) :
-            base(size)
+        public DirectBitmap(Size size, int[] data) :
+            base(size, data)
         {
-            BufferHandle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
-            Bitmap = new Bitmap(Width, Height, Width * 4, PixelFormat.Format32bppPArgb, BufferHandle.AddrOfPinnedObject());
+            Bitmap = new Bitmap(Width, Height, Width * sizeof(int), PixelFormat.Format32bppPArgb, Address);
             Graphics = Graphics.FromImage(Bitmap);
+        }
+
+        public DirectBitmap(Size size) :
+            this(size, new int[size.Width * size.Height])
+        {
         }
 
         public DirectBitmap(int width, int height) :
@@ -34,7 +33,7 @@ namespace EMBC.Utils
         {
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Graphics.Dispose();
             Graphics = default;
@@ -42,17 +41,16 @@ namespace EMBC.Utils
             Bitmap.Dispose();
             Bitmap = default;
 
-            BufferHandle.Free();
-            BufferHandle = default;
+            base.Dispose();
         }
 
         #endregion
 
         #region // routines
 
-        public void SetPixel(int x, int y, Color color) => SetValue(x, y, color.ToArgb());
+        public void SetPixel(int x, int y, Color color) => Write(x, y, color.ToArgb());
 
-        public Color GetPixel(int x, int y) => Color.FromArgb(GetValue(x, y));
+        public Color GetPixel(int x, int y) => Color.FromArgb(Read<int>(x, y));
 
         public void Clear(Color color) => Clear(color.ToArgb());
 

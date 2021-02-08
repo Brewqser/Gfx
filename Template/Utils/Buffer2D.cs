@@ -1,23 +1,33 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace EMBC.Utils
 {
-    public class Buffer2D<T>
+    public class Buffer2D<T> :
+        Buffer<T>
+        where T : unmanaged
     {
         #region // storage
 
         public Size Size { get; }
 
-        public T[] Buffer { get; }
-
         #endregion
 
         #region // ctor
 
-        public Buffer2D(Size size)
+        public Buffer2D(Size size, T[] data) :
+            base(data)
         {
+            if (size.Width * size.Height != data.Length)
+            {
+                throw new ArgumentException("Invalid data.");
+            }
             Size = size;
-            Buffer = new T[Width * Height];
+        }
+
+        public Buffer2D(Size size) :
+            this(size, new T[size.Width * size.Height])
+        {
         }
 
         #endregion
@@ -30,9 +40,9 @@ namespace EMBC.Utils
 
         public T this[int x, int y]
         {
-            get => GetValue(x, y);
+            get => Read<T>(x, y);
 
-            set => SetValue(x, y, value);
+            set => Write(x, y, value);
         }
 
         public int GetIndex(int x, int y) => x + y * Width;
@@ -44,11 +54,24 @@ namespace EMBC.Utils
             return (x, y);
         }
 
-        public void SetValue(int x, int y, in T value) => Buffer[GetIndex(x, y)] = value;
+        public void Write<U>(int x, int y, U value)
+            where U : unmanaged
+        {
+            Write(GetIndex(x, y), value);
+        }
 
-        public T GetValue(int x, int y) => Buffer[GetIndex(x, y)];
+        public U Read<U>(int x, int y)
+            where U : unmanaged
+        {
+            return Read<U>(GetIndex(x, y));
+        }
 
-        public void Clear(T value = default) => Buffer.Fill(value);
+        public T Read(int x, int y)
+        {
+            return Read<T>(x, y);
+        }
+
+        public void Clear(T value = default) => Data.Fill(value);
 
         #endregion
     }
