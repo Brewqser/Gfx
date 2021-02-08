@@ -160,7 +160,7 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
         private void StagePixelShader(int x, int y, in TPsIn psin)
         {
-            if (x < 0 || y < 0 || x >= RenderHost.BackBuffer.Size.Width || y >= RenderHost.BackBuffer.Size.Height)
+            if (x < 0 || y < 0 || x >= RenderHost.FrameBuffers.Size.Width || y >= RenderHost.FrameBuffers.Size.Height)
             {
                 return;
             }
@@ -177,7 +177,7 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
         private void StageOutputMerger(int x, int y, Vector4F psout)
         {
-            RenderHost.BackBuffer.Write(x, y, psout.ToArgb());
+            RenderHost.FrameBuffers.BufferColor[0].Write(x, y, psout.ToArgb());
         }
 
         #endregion

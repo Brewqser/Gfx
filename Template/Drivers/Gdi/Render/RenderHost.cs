@@ -23,7 +23,7 @@ namespace EMBC.Drivers.Gdi.Render
 
         private BufferedGraphics BufferedGraphics { get; set; }
 
-        public DirectBitmap BackBuffer { get; private set; }
+        public FrameBuffers FrameBuffers { get; private set; }
 
         public ShaderLibrary ShaderLibrary { get; private set; }
 
@@ -86,13 +86,13 @@ namespace EMBC.Drivers.Gdi.Render
 
         private void CreateBuffers(Size size)
         {
-            BackBuffer = new DirectBitmap(size);
+            FrameBuffers = new FrameBuffers(size);
         }
 
         private void DisposeBuffers()
         {
-            BackBuffer.Dispose();
-            BackBuffer = default;
+            FrameBuffers.Dispose();
+            FrameBuffers = default;
         }
 
         private void CreateSurface(Size size)
@@ -113,17 +113,19 @@ namespace EMBC.Drivers.Gdi.Render
 
         protected override void RenderInternal(IEnumerable<IModel> models)
         {
-            BackBuffer.Clear(Color.Black);
+            FrameBuffers.BufferColor[0].Clear(Color.Black);
+            FrameBuffers.BufferDepth.Clear(1);
 
             RenderModels(models);
 
-            BackBuffer.Graphics.DrawString(FpsCounter.FpsString, FontConsolas12, Brushes.Red, 0, 0);
-
             BufferedGraphics.Graphics.DrawImage(
-                BackBuffer.Bitmap,
+                FrameBuffers.BufferColor[0].Bitmap,
                 new RectangleF(PointF.Empty, HostSize),
                 new RectangleF(new PointF(-0.5f, -0.5f), BufferSize),
                 GraphicsUnit.Pixel);
+
+            BufferedGraphics.Graphics.DrawString(FpsCounter.FpsString, FontConsolas12, Brushes.Red, 0, 0);
+
             BufferedGraphics.Render(GraphicsHostDeviceContext);
         }
 
