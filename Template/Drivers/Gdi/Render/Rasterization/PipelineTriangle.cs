@@ -182,6 +182,8 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
                 for (var x = xStart; x < xEnd; x++)
                 {
+                    var z = scanline.Z;
+
                     var barycentric = TriangleGetBarycentric
                     (
                         primitive.PositionScreen0.ToVector3F(),
@@ -192,7 +194,7 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
                     var interpolant = primitive.PsIn0.InterpolateBarycentric(primitive.PsIn1, primitive.PsIn2, barycentric);
 
-                    StagePixelShader(x, y, interpolant);
+                    StagePixelShader(x, y, z, interpolant);
 
                     scanline += deltaScanline;
                 }

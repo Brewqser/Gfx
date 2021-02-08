@@ -91,9 +91,11 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
             foreach (var (x, y) in pixels)
             {
+                var interpolantScreen = primitive.PositionScreen0.InterpolateLinear(primitive.PositionScreen1, alpha);
+
                 var interpolant = primitive.PsIn0.InterpolateLinear(primitive.PsIn1, alpha);
 
-                StagePixelShader(x, y, interpolant);
+                StagePixelShader(x, y, interpolantScreen.Z, interpolant);
 
                 alpha += deltaAlpha;
             }

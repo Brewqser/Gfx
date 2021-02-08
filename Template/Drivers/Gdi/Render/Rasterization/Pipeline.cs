@@ -126,6 +126,19 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
             }
         }
 
+        private bool DepthTest(int index, float z)
+        {
+            ref var refDepth = ref RenderHost.FrameBuffers.BufferDepth.Data[index];
+
+            if (refDepth < z)
+            {
+                return false;
+            }
+
+            refDepth = z;
+            return true;
+        }
+
         #endregion
 
         #region // stages
@@ -179,6 +192,33 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
         {
             RenderHost.FrameBuffers.BufferColor[0].Write(x, y, psout.ToArgb());
         }
+
+        private void StagePixelShader(int x, int y, float z, in TPsIn psin)
+        {
+            if (x < 0 || y < 0 || x >= RenderHost.FrameBuffers.Size.Width || y >= RenderHost.FrameBuffers.Size.Height)
+            {
+                return;
+            }
+
+            var success = Shader.PixelShader(psin, out var psout);
+
+            if (!success)
+            {
+                return;
+            }
+
+            StageOutputMerger(x, y, z, psout);
+        }
+
+        private void StageOutputMerger(int x, int y, float z, Vector4F psout)
+        {
+            var index = RenderHost.FrameBuffers.BufferDepth.GetIndex(x, y);
+
+            if (!DepthTest(index, z)) return;
+
+            RenderHost.FrameBuffers.BufferColor[0].Write(index, psout.ToArgb());
+        }
+
 
         #endregion
 

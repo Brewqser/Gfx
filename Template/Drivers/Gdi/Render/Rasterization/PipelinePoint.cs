@@ -23,8 +23,9 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
         {
             var x = (int)primitive.PositionScreen0.X;
             var y = (int)primitive.PositionScreen0.Y;
+            var z = primitive.PositionScreen0.Z;
 
-            StagePixelShader(x, y, primitive.PsIn0);
+            StagePixelShader(x, y, z, primitive.PsIn0);
         }
     }
 }
