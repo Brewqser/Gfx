@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using EMBC.Mathematics;
 using EMBC.Mathematics.Extensions;
 
@@ -82,11 +83,19 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
         {
             var pixels = LineBresenham(
                     primitive.PositionScreen0.ToVector2F(),
-                    primitive.PositionScreen1.ToVector2F());
+                    primitive.PositionScreen1.ToVector2F())
+                .ToArray();
+
+            var deltaAlpha = 1f / pixels.Length;
+            var alpha = deltaAlpha * 0.5f;
 
             foreach (var (x, y) in pixels)
             {
-                StagePixelShader(x, y, default);
+                var interpolant = primitive.PsIn0.InterpolateLinear(primitive.PsIn1, alpha);
+
+                StagePixelShader(x, y, interpolant);
+
+                alpha += deltaAlpha;
             }
         }
 

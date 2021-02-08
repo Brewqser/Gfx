@@ -31,7 +31,7 @@ namespace EMBC.Mathematics
 
         #region // operators
 
-        public static Vector2F operator +(in Vector2F left, in Vector2F right)
+        public static Vector2F operator +(Vector2F left, Vector2F right)
         {
             return new Vector2F
             (
@@ -40,7 +40,7 @@ namespace EMBC.Mathematics
             );
         }
 
-        public static Vector2F operator -(in Vector2F left, in Vector2F right)
+        public static Vector2F operator -(Vector2F left, Vector2F right)
         {
             return new Vector2F
             (
@@ -49,7 +49,7 @@ namespace EMBC.Mathematics
             );
         }
 
-        public static Vector2F operator *(in Vector2F left, float right)
+        public static Vector2F operator *(Vector2F left, float right)
         {
             return new Vector2F
             (
@@ -58,7 +58,7 @@ namespace EMBC.Mathematics
             );
         }
 
-        public static Vector2F operator /(in Vector2F left, float right)
+        public static Vector2F operator /(Vector2F left, float right)
         {
             return new Vector2F
             (
@@ -71,12 +71,30 @@ namespace EMBC.Mathematics
 
         #region // interpolation
 
+        public Vector2F InterpolateMultiply(float multiplier)
+        {
+            return new Vector2F
+            (
+                X.InterpolateMultiply(multiplier),
+                Y.InterpolateMultiply(multiplier)
+            );
+        }
+
         public Vector2F InterpolateLinear(in Vector2F other, float alpha)
         {
             return new Vector2F
             (
                 X.InterpolateLinear(other.X, alpha),
                 Y.InterpolateLinear(other.Y, alpha)
+            );
+        }
+
+        public Vector2F InterpolateBarycentric(in Vector2F other0, in Vector2F other1, Vector3F barycentric)
+        {
+            return new Vector2F
+            (
+                X.InterpolateBarycentric(other0.X, other1.X, barycentric),
+                Y.InterpolateBarycentric(other0.Y, other1.Y, barycentric)
             );
         }
 

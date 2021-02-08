@@ -39,6 +39,9 @@ namespace EMBC.Drivers.Gdi.Materials
                 case ShaderType.Position:
                     return new Position.GfxModel(renderHost, model);
 
+                case ShaderType.PositionColor:
+                    return new PositionColor.GfxModel(renderHost, model);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(model.ShaderType), model.ShaderType, default);
             }

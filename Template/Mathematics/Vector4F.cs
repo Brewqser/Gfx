@@ -36,7 +36,7 @@ namespace EMBC.Mathematics
 
         #region // operators
 
-        public static Vector4F operator +(in Vector4F left, in Vector4F right)
+        public static Vector4F operator +(Vector4F left, Vector4F right)
         {
             return new Vector4F
             (
@@ -47,7 +47,7 @@ namespace EMBC.Mathematics
             );
         }
 
-        public static Vector4F operator -(in Vector4F left, in Vector4F right)
+        public static Vector4F operator -(Vector4F left, Vector4F right)
         {
             return new Vector4F
             (
@@ -58,7 +58,7 @@ namespace EMBC.Mathematics
             );
         }
 
-        public static Vector4F operator *(in Vector4F left, float right)
+        public static Vector4F operator *(Vector4F left, float right)
         {
             return new Vector4F
             (
@@ -69,7 +69,7 @@ namespace EMBC.Mathematics
             );
         }
 
-        public static Vector4F operator /(in Vector4F left, float right)
+        public static Vector4F operator /(Vector4F left, float right)
         {
             return new Vector4F
             (
@@ -84,6 +84,17 @@ namespace EMBC.Mathematics
 
         #region // interpolation
 
+        public Vector4F InterpolateMultiply(float multiplier)
+        {
+            return new Vector4F
+            (
+                X.InterpolateMultiply(multiplier),
+                Y.InterpolateMultiply(multiplier),
+                Z.InterpolateMultiply(multiplier),
+                W.InterpolateMultiply(multiplier)
+            );
+        }
+
         public Vector4F InterpolateLinear(in Vector4F other, float alpha)
         {
             return new Vector4F
@@ -92,6 +103,17 @@ namespace EMBC.Mathematics
                 Y.InterpolateLinear(other.Y, alpha),
                 Z.InterpolateLinear(other.Z, alpha),
                 W.InterpolateLinear(other.W, alpha)
+            );
+        }
+
+        public Vector4F InterpolateBarycentric(in Vector4F other0, in Vector4F other1, Vector3F barycentric)
+        {
+            return new Vector4F
+            (
+                X.InterpolateBarycentric(other0.X, other1.X, barycentric),
+                Y.InterpolateBarycentric(other0.Y, other1.Y, barycentric),
+                Z.InterpolateBarycentric(other0.Z, other1.Z, barycentric),
+                W.InterpolateBarycentric(other0.W, other1.W, barycentric)
             );
         }
 

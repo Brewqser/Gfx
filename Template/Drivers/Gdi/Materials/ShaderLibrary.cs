@@ -14,6 +14,8 @@ namespace EMBC.Drivers.Gdi.Materials
 
         public Position.Shader ShaderPosition { get; set; }
 
+        public PositionColor.Shader ShaderPositionColor { get; set; }
+
         #endregion
 
         #region // ctor
@@ -21,6 +23,7 @@ namespace EMBC.Drivers.Gdi.Materials
         public ShaderLibrary(RenderHost renderHost)
         {
             Shaders.Add(ShaderPosition = new Position.Shader(renderHost));
+            Shaders.Add(ShaderPositionColor = new PositionColor.Shader(renderHost));
         }
 
         public void Dispose()

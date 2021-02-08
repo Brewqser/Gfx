@@ -3,6 +3,7 @@
     public enum ShaderType
     {
         Undefined,
-        Position,
+        Position, 
+        PositionColor,
     }
 }

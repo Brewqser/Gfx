@@ -76,6 +76,10 @@
     <Compile Include="Common\Camera\Projections\ProjectionOrthographic.cs" />
     <Compile Include="Common\Camera\Projections\ProjectionPerspective.cs" />
     <Compile Include="Drivers\Gdi\Materials\GfxModel.cs" />
+    <Compile Include="Drivers\Gdi\Materials\PositionColor\BufferBinding.cs" />
+    <Compile Include="Drivers\Gdi\Materials\PositionColor\GfxModel.cs" />
+    <Compile Include="Drivers\Gdi\Materials\PositionColor\Shader.cs" />
+    <Compile Include="Drivers\Gdi\Materials\PositionColor\Vertices.cs" />
     <Compile Include="Drivers\Gdi\Materials\Position\BufferBinding.cs" />
     <Compile Include="Drivers\Gdi\Materials\Position\GfxModel.cs" />
     <Compile Include="Drivers\Gdi\Materials\Position\Shader.cs" />

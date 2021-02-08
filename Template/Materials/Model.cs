@@ -14,6 +14,8 @@ namespace EMBC.Materials
 
         public Vector3F[] Positions { get; set; }
 
+        public int[] Colors { get; set; }
+
         public int Color { get; set; }
     }
 }

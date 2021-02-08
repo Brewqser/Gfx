@@ -76,6 +76,7 @@ namespace EMBC.Client
                 .Concat(GetTriangles())
                 .Concat(GetCubes())
                 .Concat(GetPointCloud())
+                .Concat(GetPositionColorSamples())
                 ;
         }
 
@@ -229,6 +230,45 @@ namespace EMBC.Client
                     new Vector3F(-3, 0, 0),
                 },
                 Color = Color.Cyan.ToRgba(),
+            };
+        }
+
+        private static IEnumerable<IModel> GetPositionColorSamples()
+        {
+            yield return new Model
+            {
+                ShaderType = ShaderType.PositionColor,
+                Space = Space.World,
+                PrimitiveTopology = PrimitiveTopology.LineList,
+                Positions = new[]
+                {
+                    new Vector3F(1.1f, 0, 0),
+                    new Vector3F(0, 1.1f, 0),
+                },
+                Colors = new[]
+                {
+                    Color.Cyan.ToRgba(),
+                    Color.Magenta.ToRgba(),
+                },
+            };
+
+            yield return new Model
+            {
+                ShaderType = ShaderType.PositionColor,
+                Space = Space.World,
+                PrimitiveTopology = PrimitiveTopology.TriangleList,
+                Positions = new[]
+                {
+                    new Vector3F(1, 0, 0),
+                    new Vector3F(0, 0, 1),
+                    new Vector3F(0, 1, 0),
+                },
+                Colors = new[]
+                {
+                    Color.Red.ToRgba(),
+                    Color.Blue.ToRgba(),
+                    Color.LawnGreen.ToRgba(),
+                },
             };
         }
 
