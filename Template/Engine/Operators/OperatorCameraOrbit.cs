@@ -75,11 +75,13 @@ namespace EMBC.Engine.Operators
 
             if (!MouseDownView.HasValue || MouseDownCameraInfo == null || !OrbitOrigin.HasValue) return;
 
-            var mouseMoveView = RenderHost.CameraInfo.GetTransformationMatrix(Space.Screen, Space.View).Transform(args.Position.ToPoint3D());
-            RenderHost.CameraInfo = Orbit(MouseDownCameraInfo, mouseMoveView - MouseDownView.Value, OrbitOrigin.Value);
+            var cameraInfo = RenderHost.CameraInfo;
+            var mouseMoveView = cameraInfo.GetTransformationMatrix(Space.Screen, Space.View).Transform(args.Position.ToPoint3D());
+            Orbit(MouseDownCameraInfo, mouseMoveView - MouseDownView.Value, OrbitOrigin.Value, out var cameraPosition, out var cameraTarget);
+            RenderHost.CameraInfo = new CameraInfo(cameraPosition, cameraTarget, cameraInfo.UpVector, cameraInfo.Projection.Cloned(), cameraInfo.Viewport);
         }
 
-        public static ICameraInfo Orbit(ICameraInfo cameraInfoStart, Vector3D mouseOffsetView, Point3D orbitOrigin)
+        public static void Orbit(ICameraInfo cameraInfoStart, Vector3D mouseOffsetView, Point3D orbitOrigin, out Point3D cameraPosition, out Point3D cameraTarget)
         {
             var eye = cameraInfoStart.Position;
             var target = cameraInfoStart.Target;
@@ -107,14 +109,13 @@ namespace EMBC.Engine.Operators
             target = matrixRotationVertical.Transform(target);
 
             var matrixLocalToWorld = matrixWorldToLocal.Inverse();
-            eye = matrixLocalToWorld.Transform(eye);
-            target = matrixLocalToWorld.Transform(target);
-
-            return new CameraInfo(eye, target, cameraInfoStart.UpVector, cameraInfoStart.Projection.Cloned(), cameraInfoStart.Viewport);
+            cameraPosition = matrixLocalToWorld.Transform(eye);
+            cameraTarget = matrixLocalToWorld.Transform(target);
         }
 
         private static void GetSphereAngles(Vector3D mouseOffsetView, UnitVector3D eyeDirection, out Angle thetaDelta, out Angle phiDelta)
         {
+            // get deltas
             thetaDelta = new Angle(-mouseOffsetView.X * Math.PI, new Radians());
             phiDelta = new Angle(mouseOffsetView.Y * Math.PI, new Radians());
 

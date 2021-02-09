@@ -23,6 +23,20 @@ namespace EMBC.Utils
             return value;
         }
 
+        public static double Clamp(this double value, double min, double max)
+        {
+            if (value < min)
+            {
+                value = min;
+                return value;
+            }
+            if (value > max)
+            {
+                value = max;
+            }
+            return value;
+        }
+
         public static T Cloned<T>(this T cloneable) where T : ICloneable
         {
             return (T)cloneable.Clone();
