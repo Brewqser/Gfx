@@ -71,11 +71,11 @@ namespace EMBC.Client
         public static IEnumerable<IModel> GetModels()
         {
             return new IModel[0]
-                .Concat(GetWorldAxis())
-                .Concat(GetScreenViewLines())
-                .Concat(GetTriangles())
-                .Concat(GetCubes())
-                .Concat(GetPointCloud())
+                //.Concat(GetWorldAxis())
+                //.Concat(GetScreenViewLines())
+                //.Concat(GetTriangles())
+                //.Concat(GetCubes())
+                //.Concat(GetPointCloud())
                 .Concat(GetPositionColorSamples())
                 ;
         }
@@ -242,8 +242,8 @@ namespace EMBC.Client
                 PrimitiveTopology = PrimitiveTopology.LineList,
                 Positions = new[]
                 {
-                    new Vector3F(1.1f, 0, 0),
-                    new Vector3F(0, 1.1f, 0),
+                    new Vector3F(1f, 0, 0),
+                    new Vector3F(0, 1f, 0),
                 },
                 Colors = new[]
                 {
