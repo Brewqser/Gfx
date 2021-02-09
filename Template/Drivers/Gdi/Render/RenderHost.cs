@@ -25,6 +25,8 @@ namespace EMBC.Drivers.Gdi.Render
 
         public FrameBuffers FrameBuffers { get; private set; }
 
+        public TextureLibrary TextureLibrary { get; private set; }
+
         public ShaderLibrary ShaderLibrary { get; private set; }
 
         private Font FontConsolas12 { get; set; }
@@ -40,6 +42,7 @@ namespace EMBC.Drivers.Gdi.Render
             GraphicsHostDeviceContext = GraphicsHost.GetHdc();
             CreateSurface(HostInput.Size);
             CreateBuffers(BufferSize);
+            TextureLibrary = new TextureLibrary();
             ShaderLibrary = new ShaderLibrary(this);
             FontConsolas12 = new Font("Consolas", 12);
         }
@@ -51,6 +54,9 @@ namespace EMBC.Drivers.Gdi.Render
 
             ShaderLibrary.Dispose();
             ShaderLibrary = default;
+
+            TextureLibrary.Dispose();
+            TextureLibrary = default;
 
             DisposeBuffers();
             DisposeSurface();

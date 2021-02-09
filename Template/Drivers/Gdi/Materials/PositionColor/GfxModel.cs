@@ -10,7 +10,7 @@ namespace EMBC.Drivers.Gdi.Materials.PositionColor
         private Shader Shader { get; }
 
         public GfxModel(RenderHost renderHost, IModel model) :
-            base(model, renderHost.ShaderLibrary.ShaderPositionColor, new BufferBinding(model.Positions, model.Colors))
+            base(renderHost, model, renderHost.ShaderLibrary.ShaderPositionColor, new BufferBinding(model.Positions, model.Colors))
         {
             Shader = renderHost.ShaderLibrary.ShaderPositionColor;
         }

@@ -14,6 +14,10 @@ namespace EMBC.Materials
 
         int[] Colors { get; set; }
 
+        Vector2F[] TextureCoordinates { get; set; }
+
         int Color { get; set; }
+
+        ITextureResource TextureResource { get; set; }
     }
 }

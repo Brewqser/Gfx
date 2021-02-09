@@ -11,20 +11,31 @@ namespace EMBC.Drivers.Gdi.Materials
     {
         #region // storage
 
+        protected RenderHost RenderHost { get; set; }
+
         public IModel Model { get; set; }
+
+        public Texture Texture { get; set; }
 
         #endregion
 
         #region // ctor
 
-        protected GfxModel(IModel model)
+        protected GfxModel(RenderHost renderHost, IModel model)
         {
+            RenderHost = renderHost;
             Model = model;
+            if (!(Model.TextureResource is null))
+            {
+                Texture = RenderHost.TextureLibrary.GetTexture(Model.TextureResource);
+            }
         }
 
         public virtual void Dispose()
         {
+            Texture = default;
             Model = default;
+            RenderHost = default;
         }
 
         #endregion
@@ -33,7 +44,6 @@ namespace EMBC.Drivers.Gdi.Materials
 
         public static IGfxModel Factory(RenderHost renderHost, IModel model)
         {
-            // TODO: solve without switch
             switch (model.ShaderType)
             {
                 case ShaderType.Position:
@@ -41,6 +51,9 @@ namespace EMBC.Drivers.Gdi.Materials
 
                 case ShaderType.PositionColor:
                     return new PositionColor.GfxModel(renderHost, model);
+
+                case ShaderType.PositionTexture:
+                    throw new NotImplementedException(); // TODO:
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(model.ShaderType), model.ShaderType, default);
@@ -75,8 +88,8 @@ namespace EMBC.Drivers.Gdi.Materials
 
         #region // ctor
 
-        protected GfxModel(IModel model, IShader<TVsIn, TPsIn> shader, IBufferBinding<TVsIn> bufferBinding) :
-            base(model)
+        protected GfxModel(RenderHost renderHost, IModel model, IShader<TVsIn, TPsIn> shader, IBufferBinding<TVsIn> bufferBinding) :
+            base(renderHost, model)
         {
             Shader = shader;
             BufferBinding = bufferBinding;
