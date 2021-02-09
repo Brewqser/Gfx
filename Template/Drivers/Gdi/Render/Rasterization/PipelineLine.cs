@@ -57,6 +57,8 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
                 var interpolant = primitive.PsIn0.InterpolateLinear(primitive.PsIn1, alpha);
 
+                interpolant = interpolant.InterpolateMultiply(1 / interpolantScreen.W);
+
                 StagePixelShader(x, y, interpolantScreen.Z, interpolant);
 
                 alpha += deltaAlpha;

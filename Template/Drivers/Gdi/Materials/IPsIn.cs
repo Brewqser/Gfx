@@ -5,6 +5,5 @@ namespace EMBC.Drivers.Gdi.Materials
         IInterpolateSingle<TPsIn>
     {
         Vector4F Position { get; }
-        TPsIn ReplacePosition(Vector4F position);
     }
 }

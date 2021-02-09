@@ -259,6 +259,8 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
                     var interpolant = primitive.PsIn0.InterpolateBarycentric(primitive.PsIn1, primitive.PsIn2, barycentric);
 
+                    interpolant = interpolant.InterpolateMultiply(1 / scanline.W);
+
                     StagePixelShader(x, y, z, interpolant);
 
                     scanline += deltaScanline;

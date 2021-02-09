@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using EMBC.Drivers.Gdi.Materials;
 using EMBC.Materials;
 using EMBC.Mathematics;
@@ -226,10 +226,12 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
         private void VertexPostProcessing(ref TPsIn psin, out Vector4F positionScreen)
         {
-            var ndc = psin.Position / psin.Position.W;
-            psin = psin.ReplacePosition(ndc);
+            var wInv = 1 / psin.Position.W;
+            psin = psin.InterpolateMultiply(wInv);
 
             positionScreen = RenderHost.CameraInfo.Cache.MatrixViewport.Transform(psin.Position);
+
+            positionScreen = new Vector4F(positionScreen.X, positionScreen.Y, positionScreen.Z, wInv);
         }
 
         #endregion
