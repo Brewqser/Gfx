@@ -73,10 +73,10 @@ namespace EMBC.Client
             return new IModel[0]
                 .Concat(GetWorldAxis())
                 //.Concat(GetScreenViewLines())
-                .Concat(GetTriangles())
+                //.Concat(GetTriangles())
                 //.Concat(GetCubes())
                 //.Concat(GetPointCloud())
-                //.Concat(GetPositionColorSamples())
+                .Concat(GetPositionColorSamples())
                 ;
         }
 
@@ -134,7 +134,7 @@ namespace EMBC.Client
                     new Vector3F(0, 0, 0),
                     new Vector3F(0, 1, 0),
                 },
-                Color = Color.LawnGreen.ToRgba(),
+                Color = Color.FromArgb(255, 0, 255, 0).ToRgba(),
             };
 
             yield return new Model
@@ -235,6 +235,7 @@ namespace EMBC.Client
 
         private static IEnumerable<IModel> GetPositionColorSamples()
         {
+            /*
             yield return new Model
             {
                 ShaderType = ShaderType.PositionColor,
@@ -251,7 +252,7 @@ namespace EMBC.Client
                     Color.Magenta.ToRgba(),
                 },
             };
-            /*
+            */
             yield return new Model
             {
                 ShaderType = ShaderType.PositionColor,
@@ -270,7 +271,6 @@ namespace EMBC.Client
                     Color.LawnGreen.ToRgba(),
                 },
             };
-            */
             
         }
 
