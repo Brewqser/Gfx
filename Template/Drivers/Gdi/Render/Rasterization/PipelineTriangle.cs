@@ -59,6 +59,50 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
         private void VertexPostProcessingTriangle(ref TPsIn psin0, ref TPsIn psin1, ref TPsIn psin2)
         {
+            VertexPostProcessingTriangleClipping(ref psin0, ref psin1, ref psin2, 5 /* all 6 clipping planes */);
+        }
+
+        private void VertexPostProcessingTriangleClipping(ref TPsIn psin0, ref TPsIn psin1, ref TPsIn psin2, int planesLeft)
+        {
+            if (planesLeft < 0)
+            {
+                VertexPostProcessingTriangleAssemble(psin0, psin1, psin2);
+                return;
+            }
+
+            var vertexCount = Clipping<TPsIn>.ClipByPlane((ClippingPlane)(1 << planesLeft), ref psin0, ref psin1, ref psin2, out var psin3);
+
+            if (vertexCount == 0)
+            {
+                return;
+            }
+
+            planesLeft--;
+            if (vertexCount == 3)
+            {
+                VertexPostProcessingTriangleClipping(ref psin0, ref psin1, ref psin2, planesLeft);
+                return;
+            }
+
+            var psin0Copy = psin0;
+            var psin1Copy = psin1;
+            var psin2Copy = psin2;
+
+            VertexPostProcessingTriangleClipping(ref psin0Copy, ref psin1Copy, ref psin2Copy, planesLeft);
+
+            if (vertexCount == 4)
+            {
+                VertexPostProcessingTriangleClipping(ref psin0, ref psin2, ref psin3, planesLeft);
+            }
+            else
+            {
+                System.Diagnostics.Debug.Assert(vertexCount == -4, "Reverse triangle should come with code -4.");
+                VertexPostProcessingTriangleClipping(ref psin1, ref psin3, ref psin2, planesLeft);
+            }
+        }
+
+        private void VertexPostProcessingTriangleAssemble(in TPsIn psin0, in TPsIn psin1, in TPsIn psin2)
+        {
             PrimitiveTriangle primitive;
             primitive.PsIn0 = psin0;
             primitive.PsIn1 = psin1;

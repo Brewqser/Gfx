@@ -123,5 +123,75 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
             return true;
         }
+
+        public static int ClipByPlane(ClippingPlane plane, ref TVertex vertex0, ref TVertex vertex1, ref TVertex vertex2, out TVertex vertex3)
+        {
+            var inside0 = !IsOutside(plane, vertex0);
+            var inside1 = !IsOutside(plane, vertex1);
+            var inside2 = !IsOutside(plane, vertex2);
+
+            var count = 0;
+            if (inside0) count++;
+            if (inside1) count++;
+            if (inside2) count++;
+
+            if (count == 3)
+            {
+                vertex3 = default;
+                return 3;
+            }
+
+            if (count == 0)
+            {
+                vertex3 = default;
+                return 0;
+            }
+
+            if (count == 1)
+            {
+                if (inside0)
+                {
+                    vertex1 = vertex0.InterpolateLinear(vertex1, GetAlpha(plane, vertex0, vertex1));
+                    vertex2 = vertex0.InterpolateLinear(vertex2, GetAlpha(plane, vertex0, vertex2));
+                    vertex3 = default;
+                    return 3;
+                }
+                if (inside1)
+                {
+                    vertex0 = vertex1.InterpolateLinear(vertex0, GetAlpha(plane, vertex1, vertex0));
+                    vertex2 = vertex1.InterpolateLinear(vertex2, GetAlpha(plane, vertex1, vertex2));
+                    vertex3 = default;
+                    return 3;
+                }
+                if (inside2)
+                {
+                    vertex0 = vertex2.InterpolateLinear(vertex0, GetAlpha(plane, vertex2, vertex0));
+                    vertex1 = vertex2.InterpolateLinear(vertex1, GetAlpha(plane, vertex2, vertex1));
+                    vertex3 = default;
+                    return 3;
+                }
+            }
+
+            if (!inside0)
+            {
+                vertex3 = vertex0.InterpolateLinear(vertex2, GetAlpha(plane, vertex0, vertex2));
+                vertex0 = vertex0.InterpolateLinear(vertex1, GetAlpha(plane, vertex0, vertex1));
+                return 4;
+            }
+            if (!inside1)
+            {
+                vertex3 = vertex1.InterpolateLinear(vertex2, GetAlpha(plane, vertex1, vertex2));
+                vertex1 = vertex0.InterpolateLinear(vertex1, GetAlpha(plane, vertex0, vertex1));
+                return -4; 
+            }
+            if (!inside2)
+            {
+                vertex3 = vertex0.InterpolateLinear(vertex2, GetAlpha(plane, vertex0, vertex2));
+                vertex2 = vertex1.InterpolateLinear(vertex2, GetAlpha(plane, vertex1, vertex2));
+                return 4;
+            }
+
+            throw new NotSupportedException("Invalid logic path.");
+        }
     }
 }
