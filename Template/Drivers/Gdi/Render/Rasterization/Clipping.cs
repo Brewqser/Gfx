@@ -59,5 +59,69 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
                     throw new ArgumentOutOfRangeException(nameof(plane), plane, default);
             }
         }
+
+        private static float GetAlpha(ClippingPlane plane, in TVertex vertex0, in TVertex vertex1)
+        {
+            switch (plane)
+            {
+                case ClippingPlane.Inside:
+                    return float.NaN;
+
+                case ClippingPlane.Left:
+                    return (vertex0.Position.X + vertex0.Position.W) / (vertex0.Position.X - vertex1.Position.X + vertex0.Position.W - vertex1.Position.W);
+
+                case ClippingPlane.Right:
+                    return (vertex0.Position.X - vertex0.Position.W) / (vertex0.Position.X - vertex1.Position.X - vertex0.Position.W + vertex1.Position.W);
+
+                case ClippingPlane.Bottom:
+                    return (vertex0.Position.Y + vertex0.Position.W) / (vertex0.Position.Y - vertex1.Position.Y + vertex0.Position.W - vertex1.Position.W);
+
+                case ClippingPlane.Top:
+                    return (vertex0.Position.Y - vertex0.Position.W) / (vertex0.Position.Y - vertex1.Position.Y - vertex0.Position.W + vertex1.Position.W);
+
+                case ClippingPlane.Far:
+                    return (vertex0.Position.Z - vertex0.Position.W) / (vertex0.Position.Z - vertex1.Position.Z - vertex0.Position.W + vertex1.Position.W);
+
+                case ClippingPlane.Near:
+                    if (Clipping.CLIP_NEAR_PLANE_AT_ZERO)
+                    {
+                        return vertex0.Position.Z / (vertex0.Position.Z - vertex1.Position.Z);
+                    }
+                    else
+                    {
+                        return (vertex0.Position.Z + vertex0.Position.W) / (vertex0.Position.Z - vertex1.Position.Z + vertex0.Position.W - vertex1.Position.W);
+                    }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(plane), plane, default);
+            }
+        }
+
+        public static bool ClipByPlane(ClippingPlane plane, ref TVertex vertex0, ref TVertex vertex1)
+        {
+            var inside0 = !IsOutside(plane, vertex0);
+            var inside1 = !IsOutside(plane, vertex1);
+
+            if (inside0 && inside1)
+            {
+                return true;
+            }
+
+            if (!inside0 && !inside1)
+            {
+                return false;
+            }
+
+            if (inside0)
+            {
+                vertex1 = vertex0.InterpolateLinear(vertex1, GetAlpha(plane, vertex0, vertex1));
+            }
+            else
+            {
+                vertex0 = vertex0.InterpolateLinear(vertex1, GetAlpha(plane, vertex0, vertex1));
+            }
+
+            return true;
+        }
     }
 }

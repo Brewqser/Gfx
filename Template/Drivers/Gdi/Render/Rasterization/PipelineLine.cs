@@ -20,6 +20,14 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
         private void VertexPostProcessingLine(ref TPsIn psin0, ref TPsIn psin1)
         {
+            for (var i = 0; i < 6; i++)
+            {
+                if (!Clipping<TPsIn>.ClipByPlane((ClippingPlane)(1 << i), ref psin0, ref psin1))
+                {
+                    return;
+                }
+
+            }
             PrimitiveLine primitive;
             primitive.PsIn0 = psin0;
             primitive.PsIn1 = psin1;
