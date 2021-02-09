@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using MathNet.Spatial.Euclidean;
-using EMBC.Common.Camera;
 using EMBC.Engine.Render;
 using EMBC.Utils;
 using EMBC.Materials;
@@ -30,6 +28,8 @@ namespace EMBC.Client
         private void Ctor()
         {
             RenderHosts = WindowFactory.SeedWindows();
+
+            RenderHosts.ForEach(rh => rh.HostInput.KeyDown += (sender, args) => Seed.HostInputOnKeyDown(args, rh));
 
             while (!Dispatcher.HasShutdownStarted)
             {

@@ -8,6 +8,8 @@ using EMBC.Materials;
 using EMBC.Mathematics;
 using EMBC.Mathematics.Extensions;
 using EMBC.Utils;
+using EMBC.Inputs;
+using EMBC.Engine.Render;
 
 namespace EMBC.Client
 {
@@ -313,5 +315,17 @@ namespace EMBC.Client
                 }
             }
         }
+
+        #region // input
+
+        public static void HostInputOnKeyDown(IKeyEventArgs args, IRenderHost renderHost)
+        {
+            if (args.Modifiers == Modifiers.None && args.Key == Key.F12)
+            {
+                SeedProjectionTransition.Switch(renderHost);
+            }
+        }
+
+        #endregion
     }
 }
