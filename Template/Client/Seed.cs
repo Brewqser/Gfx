@@ -270,6 +270,7 @@ namespace EMBC.Client
                     Color.LawnGreen.ToRgba(),
                 },
             };
+            
         }
 
         public static IEnumerable<Vector3F> StreamPointCloud_XYZ(string filePath)

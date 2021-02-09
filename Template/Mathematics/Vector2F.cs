@@ -31,6 +31,16 @@ namespace EMBC.Mathematics
 
         #region // operators
 
+        public static bool operator ==(Vector2F left, Vector2F right)
+        {
+            return left.X.Equals(right.X) && left.Y.Equals(right.Y);
+        }
+
+        public static bool operator !=(Vector2F left, Vector2F right)
+        {
+            return !(left == right);
+        }
+
         public static Vector2F operator +(Vector2F left, Vector2F right)
         {
             return new Vector2F
@@ -101,6 +111,24 @@ namespace EMBC.Mathematics
         #endregion
 
         #region // routines
+
+        public bool Equals(Vector2F other)
+        {
+            return X.Equals(other.X) && Y.Equals(other.Y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Vector2F other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (X.GetHashCode() * 397) ^ Y.GetHashCode();
+            }
+        }
 
         public override string ToString() => $"{X:0.000000}, {Y:0.000000}";
 
