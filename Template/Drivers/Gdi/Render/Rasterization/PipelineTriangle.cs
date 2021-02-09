@@ -23,6 +23,15 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
         #region // routines
 
+        private static bool TriangleFaceCulling(in PrimitiveTriangle primitive)
+        {
+            var isCounterClockWise =
+                (primitive.PositionScreen1.X - primitive.PositionScreen0.X) * (primitive.PositionScreen2.Y - primitive.PositionScreen0.Y) -
+                (primitive.PositionScreen2.X - primitive.PositionScreen0.X) * (primitive.PositionScreen1.Y - primitive.PositionScreen0.Y) > 0;
+
+            return isCounterClockWise;
+        }
+
         private static int TriangleClampX(int value, in Viewport viewport) => value.Clamp(viewport.X, viewport.X + viewport.Width);
 
         private static int TriangleClampY(int value, in Viewport viewport) => value.Clamp(viewport.Y, viewport.Y + viewport.Height);
@@ -57,6 +66,11 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
             VertexPostProcessing(ref primitive.PsIn0, out primitive.PositionScreen0);
             VertexPostProcessing(ref primitive.PsIn1, out primitive.PositionScreen1);
             VertexPostProcessing(ref primitive.PsIn2, out primitive.PositionScreen2);
+
+            if (!TriangleFaceCulling(primitive))
+            {
+                return;
+            }
 
             RasterizeTriangle(primitive);
         }
