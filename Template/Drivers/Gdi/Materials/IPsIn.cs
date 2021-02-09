@@ -2,7 +2,7 @@
 namespace EMBC.Drivers.Gdi.Materials
 {
     public interface IPsIn<TPsIn> :
-        IInterpolate<TPsIn>
+        IInterpolateSingle<TPsIn>
     {
         Vector4F Position { get; }
         TPsIn ReplacePosition(Vector4F position);

@@ -8,7 +8,7 @@ namespace EMBC.Mathematics
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public readonly struct Vector4F :
-        IInterpolate<Vector4F>
+        IInterpolateSingle<Vector4F>
     {
         #region // static
 
