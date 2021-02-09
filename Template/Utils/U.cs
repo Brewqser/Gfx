@@ -5,6 +5,10 @@ namespace EMBC.Utils
 {
     public static class U
     {
+        public static int EnvironmentProcessorCount { get; } = Environment.ProcessorCount;
+
+        public static System.Threading.Tasks.ParallelOptions ParallelOptionsDefault = new System.Threading.Tasks.ParallelOptions { MaxDegreeOfParallelism = EnvironmentProcessorCount };
+
         public static int Clamp(this int value, int min, int max)
         {
             if (value < min)

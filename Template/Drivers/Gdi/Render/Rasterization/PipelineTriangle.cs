@@ -1,4 +1,7 @@
-﻿using System;
+﻿#define USE_PARALLEL
+
+using System;
+
 using EMBC.Common.Camera;
 using EMBC.Mathematics;
 using EMBC.Mathematics.Extensions;
@@ -158,7 +161,7 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
             RasterizeTriangleFlat(primitive, vertexTop, vertexTop, deltaLeft, deltaRight, height);
         }
 
-        private void RasterizeTriangleFlat(in PrimitiveTriangle primitive, Vector4F edgeLeft, Vector4F edgeRight, Vector4F deltaLeft, Vector4F deltaRight, float height)
+        private void RasterizeTriangleFlat(PrimitiveTriangle primitive, Vector4F edgeLeft, Vector4F edgeRight, Vector4F deltaLeft, Vector4F deltaRight, float height)
         {
             var yStart = TriangleClampY((int)Math.Round(edgeLeft.Y), RenderHost.CameraInfo.Viewport);
             var yEnd = TriangleClampY((int)Math.Round(edgeLeft.Y + height), RenderHost.CameraInfo.Viewport);
@@ -166,7 +169,11 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
             edgeLeft += deltaLeft * (yStart - edgeLeft.Y + 0.5f);
             edgeRight += deltaRight * (yStart - edgeRight.Y + 0.5f);
 
+#if USE_PARALLEL
+            System.Threading.Tasks.Parallel.For(yStart, yEnd, U.ParallelOptionsDefault, y =>
+#else           
             for (var y = yStart; y < yEnd; y++)
+#endif
             {
                 var eLeft = edgeLeft + deltaLeft * (y - yStart);
                 var eRight = edgeRight + deltaRight * (y - yStart);
@@ -199,6 +206,9 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
                     scanline += deltaScanline;
                 }
             }
+#if USE_PARALLEL
+            ); // end of Parallel.For
+#endif
         }
 
 
