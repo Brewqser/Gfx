@@ -12,9 +12,11 @@ namespace EMBC.Drivers.Gdi.Materials
 
         private List<IShader> Shaders { get; set; } = new List<IShader>();
 
-        public Position.Shader ShaderPosition { get; set; }
+        public Position.Shader ShaderPosition { get; }
 
-        public PositionColor.Shader ShaderPositionColor { get; set; }
+        public PositionColor.Shader ShaderPositionColor { get; }
+
+        public PositionTexture.Shader ShaderPositionTexture { get; }
 
         #endregion
 
@@ -24,15 +26,12 @@ namespace EMBC.Drivers.Gdi.Materials
         {
             Shaders.Add(ShaderPosition = new Position.Shader(renderHost));
             Shaders.Add(ShaderPositionColor = new PositionColor.Shader(renderHost));
+            Shaders.Add(ShaderPositionTexture = new PositionTexture.Shader(renderHost));
         }
 
         public void Dispose()
         {
-            foreach (var shader in Shaders)
-            {
-                shader.Dispose();
-            }
-            Shaders = default;
+            Shaders.ForEach(shader => shader.Dispose());
         }
 
         #endregion

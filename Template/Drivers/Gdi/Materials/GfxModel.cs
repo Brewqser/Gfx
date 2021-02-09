@@ -53,7 +53,7 @@ namespace EMBC.Drivers.Gdi.Materials
                     return new PositionColor.GfxModel(renderHost, model);
 
                 case ShaderType.PositionTexture:
-                    throw new NotImplementedException(); // TODO:
+                    return new PositionTexture.GfxModel(renderHost, model);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(model.ShaderType), model.ShaderType, default);

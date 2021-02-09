@@ -76,7 +76,8 @@ namespace EMBC.Client
                 //.Concat(GetTriangles())
                 //.Concat(GetCubes())
                 //.Concat(GetPointCloud())
-                .Concat(GetPositionColorSamples())
+                //.Concat(GetPositionColorSamples())
+                .Concat(GetPositionTextureSamples())
                 ;
         }
 
@@ -272,6 +273,30 @@ namespace EMBC.Client
                 },
             };
             
+        }
+        private static IEnumerable<IModel> GetPositionTextureSamples()
+        {
+            yield return new Model
+            {
+                ShaderType = ShaderType.PositionTexture,
+                Space = Space.World,
+                PrimitiveTopology = PrimitiveTopology.TriangleStrip,
+                TextureResource = TextureResourceLibrary.GetOrCreateFromFile("../../../resources/checkers.png"),
+                Positions = new[]
+                {
+                    new Vector3F(0, 0, 0),
+                    new Vector3F(0, 1, 0),
+                    new Vector3F(1, 0, 0),
+                    new Vector3F(1, 1, 0),
+                },
+                TextureCoordinates = new[]
+                {
+                    new Vector2F(0, 1),
+                    new Vector2F(0, 0),
+                    new Vector2F(1, 1),
+                    new Vector2F(1, 0),
+                },
+            };
         }
 
         public static IEnumerable<Vector3F> StreamPointCloud_XYZ(string filePath)
