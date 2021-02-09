@@ -12,6 +12,14 @@ namespace EMBC.Drivers.Gdi.Render.Rasterization
 
         private void VertexPostProcessingPoint(ref TPsIn psin)
         {
+            for (var i = 0; i < 6; i++)
+            {
+                if (Clipping<TPsIn>.IsOutside((ClippingPlane)(1 << i), psin))
+                {
+                    return;
+                }
+            }
+
             PrimitivePoint primitive;
             primitive.PsIn0 = psin;
             VertexPostProcessing(ref primitive.PsIn0, out primitive.PositionScreen0);

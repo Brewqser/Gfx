@@ -71,12 +71,12 @@ namespace EMBC.Client
         public static IEnumerable<IModel> GetModels()
         {
             return new IModel[0]
-                //.Concat(GetWorldAxis())
+                .Concat(GetWorldAxis())
                 //.Concat(GetScreenViewLines())
                 //.Concat(GetTriangles())
                 //.Concat(GetCubes())
-                //.Concat(GetPointCloud())
-                .Concat(GetPositionColorSamples())
+                .Concat(GetPointCloud())
+                //.Concat(GetPositionColorSamples())
                 ;
         }
 
